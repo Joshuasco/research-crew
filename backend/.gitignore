@@ -1,0 +1,12 @@
+# Python Virtual Environment & Bytecode
+venv/
+__pycache__/
+*.py[cod]
+
+# Environment Configuration Files
+.env
+.env.local
+
+# Logs and Rejection Artifacts
+logs/rejections/*.json
+!logs/rejections/.gitkeep
