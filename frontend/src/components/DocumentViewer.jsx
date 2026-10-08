@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { FileText, ShieldCheck, Download, Sparkles } from 'lucide-react';
+import { FileText, ShieldCheck, Sparkles } from 'lucide-react';
 import { ExportActions } from './ExportActions';
 import { ReviewerDiffViewer } from './ReviewerDiffViewer';
 
@@ -23,7 +23,13 @@ export function DocumentViewer({ markdownContent, topic, rejections, isStreaming
           )}
         </div>
 
-        {markdownContent && <ExportActions markdownContent={markdownContent} topic={topic} />}
+        {markdownContent && (
+          <ExportActions
+            markdownContent={markdownContent}
+            topic={topic}
+            agentStatus={agentStatus}
+          />
+        )}
       </div>
 
       {/* Document Content View */}
