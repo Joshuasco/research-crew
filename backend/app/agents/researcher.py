@@ -18,6 +18,11 @@ Return structured Markdown research notes with comprehensive factual data, quant
 """
 
 class ResearcherAgent:
+    def get_crewai_agent(self):
+        """Lazy-import CrewAI Agent definition for CrewAI pipeline workflows."""
+        from app.agents.crew import create_researcher_agent
+        return create_researcher_agent()
+
     async def run(self, topic: str) -> str:
         logger.info(f"Researcher Agent executing for topic: '{topic}'")
 
