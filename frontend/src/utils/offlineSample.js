@@ -41,7 +41,7 @@ The enterprise automation market has evolved from single-prompt generation wrapp
 # Risks & Regulations
 
 - **Data Attribution Integrity**: Unverified automated outputs risk introducing unbacked data points into strategic decision pipelines. *Mitigation: Mandatory line-item cross-referencing against primary verified source ledgers [Ref 1].*
-- **Uncertainty Masking**: Automated systems tend to frame speculative hypotheses as settled facts. *Mitigation: Mandatory `[UNCERTAIN: reason]` tagging protocol for research nodes [Ref 2].*
+- **Uncertainty Masking**: Automated systems tend to frame speculative hypotheses as settled facts. *Mitigation: Mandatory \`[UNCERTAIN: reason]\` tagging protocol for research nodes [Ref 2].*
 - **API Endpoint Outages**: Dependence on single external cloud endpoints can disrupt live operations. *Mitigation: Multi-endpoint fallback routing with client-side document buffering [Ref 3].*
 
 ---

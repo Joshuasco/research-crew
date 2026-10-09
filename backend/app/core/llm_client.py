@@ -35,7 +35,7 @@ class OpenRouterLLMClient:
                     {"role": "user", "content": user_prompt}
                 ],
                 "temperature": temperature,
-                "max_tokens": 3000
+                "max_tokens": 4096
             }
 
             try:

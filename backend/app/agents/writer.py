@@ -9,13 +9,15 @@ YOUR RESPONSIBILITIES:
 Synthesize structured research notes into a comprehensive, highly detailed Executive Briefing Document that strictly adheres to professional research briefing standards.
 
 MANDATORY STRUCTURAL & FORMATTING CONSTRAINTS:
-1. You MUST populate all 6 exact section headings:
+1. You MUST populate ALL 6 exact section headings using top-level H1 `#` markdown tags:
    # Executive Summary
    # Market Context
    # Key Competitors & Metrics
    # Risks & Regulations
    # Strategic Recommendations
    # Verified Source Ledger
+
+   CRITICAL COMPLETENESS REQUIREMENT: You MUST include ALL 6 sections from Section 1 to Section 6. Never truncate or omit Sections 4 (# Risks & Regulations), Section 5 (# Strategic Recommendations), or Section 6 (# Verified Source Ledger).
 
 2. Section-by-Section Content Depth & Format Requirements:
    - # Executive Summary: Provide a thorough, multi-paragraph synthesis outlining the core research problem, key quantitative findings, current industry state, and strategic takeaways. Include a callout block using '> [!NOTE]' detailing the briefing's scope.
@@ -34,7 +36,7 @@ MANDATORY STRUCTURAL & FORMATTING CONSTRAINTS:
    - Strictly map all figures and facts to the provided research notes. Do not hallucinate metrics. Frame [UNCERTAIN: ...] items conservatively as unverified or speculative.
 
 OUTPUT FORMAT:
-Return complete Markdown document text starting with '# Executive Summary'.
+Return complete Markdown document text starting with '# Executive Summary' and ending with '# Verified Source Ledger'.
 """
 
 class WriterAgent:

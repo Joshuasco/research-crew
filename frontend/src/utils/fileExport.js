@@ -29,7 +29,8 @@ import { parseMarkdownBlocks, tokenizeInline, stripMarkdown } from './markdownPa
  * Supports string content and binary Blob instances.
  */
 export function downloadDocument(content, filename, format = 'md') {
-  if (!content) return;
+  if (!content) return content;
+  if (typeof document === 'undefined') return content;
 
   const mimeTypes = {
     md: 'text/markdown;charset=utf-8;',
@@ -44,16 +45,20 @@ export function downloadDocument(content, filename, format = 'md') {
   const blob = content instanceof Blob
     ? content
     : new Blob([content], { type: mimeTypes[format] || mimeTypes.md });
-  const url = URL.createObjectURL(blob);
 
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', finalFilename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  if (typeof window !== 'undefined' && window.URL) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', finalFilename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  return blob;
 }
 
 /**

@@ -18,12 +18,28 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
 
   const blocks = parseMarkdownBlocks(markdownContent);
 
-  // Group blocks by section heading
+  // Group blocks by section heading (supporting both level 1 and level 2 headings)
   const sections = [];
   let currentSection = { heading: 'Overview', level: 1, blocks: [] };
 
+  const isMandatoryHeading = (headingText) => {
+    const lower = headingText.toLowerCase();
+    return [
+      'executive summary',
+      'market context',
+      'competitor',
+      'metrics',
+      'risk',
+      'regulation',
+      'strategic recommendation',
+      'recommendation',
+      'source ledger',
+      'verified source'
+    ].some((h) => lower.includes(h));
+  };
+
   blocks.forEach((block) => {
-    if (block.type === 'heading' && block.level === 1) {
+    if (block.type === 'heading' && (block.level === 1 || (block.level === 2 && isMandatoryHeading(block.text)))) {
       if (currentSection.blocks.length > 0 || currentSection.heading !== 'Overview') {
         sections.push(currentSection);
       }
