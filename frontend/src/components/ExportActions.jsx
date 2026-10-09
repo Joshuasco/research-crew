@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { Download, FileText, Check, Copy, FileDown, Loader2, AlertCircle } from 'lucide-react';
+import { FileText, Check, Copy, FileDown, Loader2, AlertCircle } from 'lucide-react';
 import {
-  exportMarkdown,
-  exportText,
   exportPdf,
   exportDocx
 } from '../utils/fileExport';
@@ -50,26 +48,6 @@ export function ExportActions({ markdownContent, topic, agentStatus }) {
   return (
     <>
       <div className="flex flex-wrap items-center gap-1.5 md:gap-2 font-sans text-xs">
-        {/* Download .MD */}
-        <button
-          onClick={() => exportMarkdown(markdownContent, topic)}
-          className="px-2.5 py-1.5 rounded bg-white text-black font-semibold hover:bg-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-          title="Download Client-Side Blob (.md)"
-        >
-          <Download className="w-3.5 h-3.5" />
-          Download .MD
-        </button>
-
-        {/* Download .TXT */}
-        <button
-          onClick={() => exportText(markdownContent, topic)}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700 font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
-          title="Download Client-Side Blob (.txt)"
-        >
-          <FileText className="w-3.5 h-3.5" />
-          Download .TXT
-        </button>
-
         {/* Download .PDF */}
         <button
           onClick={handleDownloadPdf}

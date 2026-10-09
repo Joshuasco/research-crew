@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     
     # Primary & Fallback Free LLM Models on OpenRouter
     FREE_MODELS: list[str] = [
-        "meta-llama/llama-3-8b-instruct:free",
-        "mistralai/mistral-7b-instruct:free",
-        "google/gemma-2-9b-it:free",
-        "qwen/qwen-2-7b-instruct:free"
+        "google/gemma-4-26b-a4b-it:free",
+        "nvidia/nemotron-3-super-120b-a12b:free",
+        "liquid/lfm-2.5-2.6b:free",
+        "google/gemma-4-31b-it:free"
     ]
     
     MAX_REVISION_ITERATIONS: int = 2

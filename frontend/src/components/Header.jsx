@@ -16,23 +16,12 @@ export function Header({ isStreaming, isDemoMode, onRunDemo, onLoadDemo, onReset
             <h1 className="font-sans text-sm md:text-base font-bold tracking-tight uppercase text-white">
               The Research Crew
             </h1>
-            <span className="px-2 py-0.5 text-[10px] font-mono font-medium rounded bg-neutral-900 text-neutral-300 border border-neutral-800 flex items-center gap-1">
-              <Cpu className="w-3 h-3 text-neutral-400" />
-              OpenRouter Free Tier
-            </span>
-            <span className="px-2 py-0.5 text-[10px] font-mono font-medium rounded bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              Reviewer Gate Active
-            </span>
             {isDemoMode && (
               <span className="px-2 py-0.5 text-[10px] font-mono font-medium rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 animate-pulse">
                 ⚡ Demo Mode Active
               </span>
             )}
           </div>
-          <p className="text-xs font-sans font-normal text-neutral-400 mt-0.5">
-            Autonomous Multi-Agent Pipeline &bull; Deterministic Audit Loops &bull; Verified Intelligence
-          </p>
         </div>
       </div>
 

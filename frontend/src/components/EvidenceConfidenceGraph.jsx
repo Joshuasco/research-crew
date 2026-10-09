@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Activity, ShieldCheck } from 'lucide-react';
 
-const PROGRESSION_POINTS = [
+const DEFAULT_PROGRESSION_POINTS = [
   {
     step: '01',
     agent: 'Researcher',
@@ -60,17 +60,25 @@ const PROGRESSION_POINTS = [
   }
 ];
 
-export function EvidenceConfidenceGraph() {
-  const [activePoint, setActivePoint] = useState(PROGRESSION_POINTS[PROGRESSION_POINTS.length - 1]);
+export function EvidenceConfidenceGraph({ telemetry }) {
+  const activePoints = (telemetry?.trajectory_points && telemetry.trajectory_points.length > 0)
+    ? telemetry.trajectory_points
+    : DEFAULT_PROGRESSION_POINTS;
+
+  const [selectedStep, setSelectedStep] = useState(null);
+  const activePoint = activePoints.find(p => p.step === selectedStep) || activePoints[activePoints.length - 1];
+
+  const lastPoint = activePoints[activePoints.length - 1];
+  const precisionLabel = telemetry?.verification_precision ? `${telemetry.verification_precision}%` : `${lastPoint?.confidence ?? 0}%`;
 
   // Coordinate mapping for SVG (viewBox: 0 0 1000 280)
-  // X: 70 to 950 across 6 points
+  // X: 70 to 950 across activePoints.length points
   // Y: 240 (0%) down to 35 (100%)
   const getY = (val) => 240 - (val / 100) * 205;
-  const getX = (idx) => 80 + idx * (860 / (PROGRESSION_POINTS.length - 1));
+  const getX = (idx) => activePoints.length === 1 ? 500 : 80 + idx * (860 / (activePoints.length - 1));
 
   // Build SVG path points
-  const points = PROGRESSION_POINTS.map((p, idx) => ({
+  const points = activePoints.map((p, idx) => ({
     x: getX(idx),
     y: getY(p.confidence),
     ...p
@@ -111,7 +119,7 @@ export function EvidenceConfidenceGraph() {
           <span className="text-neutral-400 text-[11px]">Threshold Gate:</span>
           <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-950 border border-emerald-600/60 text-emerald-300 flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            95.0% EXCEEDED (99.2%)
+            95.0% EXCEEDED ({precisionLabel})
           </span>
         </div>
       </div>
@@ -215,7 +223,7 @@ export function EvidenceConfidenceGraph() {
                 <g
                   key={idx}
                   className="cursor-pointer group"
-                  onClick={() => setActivePoint(p)}
+                  onClick={() => setSelectedStep(p.step)}
                 >
                   {/* Subtle vertical milestone guide */}
                   <line

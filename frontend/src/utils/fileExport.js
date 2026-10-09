@@ -252,12 +252,14 @@ export async function exportPdf(content, topic, options = {}) {
         doc.setFontSize(11);
         doc.setTextColor(30, 41, 59);
         doc.text(block.text, leftMargin, curY);
-        curY += 8;
+        curY += 10;
       } else {
-        doc.setFontSize(9.5);
+        checkPageBreak(25);
+        curY += 6;
+        doc.setFontSize(10);
         doc.setTextColor(51, 65, 85);
         doc.text(block.text, leftMargin, curY);
-        curY += 6;
+        curY += 12;
       }
       doc.setTextColor(51, 65, 85);
     } else if (block.type === 'paragraph') {
@@ -336,7 +338,7 @@ export async function exportPdf(content, topic, options = {}) {
           cellWidth: 'auto'
         }
       });
-      curY = doc.lastAutoTable.finalY + 14;
+      curY = doc.lastAutoTable.finalY + 22;
     } else if (block.type === 'hr') {
       checkPageBreak(15);
       curY += 4;
