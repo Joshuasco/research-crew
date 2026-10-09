@@ -120,6 +120,7 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
                     critique=last_critique,
                     iteration=iteration
                 )
+                draft_markdown = draft_markdown or ""
                 telemetry.estimate_tokens_from_text(draft_markdown)
                 telemetry.update_from_draft(draft_markdown, iteration)
 

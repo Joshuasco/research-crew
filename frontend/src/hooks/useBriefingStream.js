@@ -169,7 +169,8 @@ export function useBriefingStream() {
     else if (payload.event === 'final_delivery') handleFinalDelivery(payload);
   }, [handleTelemetryEvent, handleRejectionEvent, handleFinalDelivery]);
 
-  const startStream = useCallback((inputTopic, backendUrl = 'http://localhost:8000/api/briefing/stream') => {
+  const startStream = useCallback((inputTopic, customBackendUrl = null) => {
+    const backendUrl = customBackendUrl || import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000/api/briefing/stream';
     resetState();
     setTopic(inputTopic);
     setIsStreaming(true);

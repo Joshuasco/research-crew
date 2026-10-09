@@ -380,9 +380,12 @@ export async function exportPdf(content, topic, options = {}) {
     }
   }
 
-  const blob = doc.output('blob');
   const filename = sanitizeFilename(topic);
-  downloadDocument(blob, filename, 'pdf');
+  if (typeof document !== 'undefined') {
+    const blob = doc.output('blob');
+    downloadDocument(blob, filename, 'pdf');
+  }
+  return doc;
 }
 
 /**
@@ -558,7 +561,11 @@ export async function exportDocx(content, topic, options = {}) {
     }]
   });
 
-  const blob = await Packer.toBlob(doc);
   const filename = sanitizeFilename(topic);
-  downloadDocument(blob, filename, 'docx');
+  if (typeof document !== 'undefined') {
+    const blob = await Packer.toBlob(doc);
+    downloadDocument(blob, filename, 'docx');
+  }
+  const buffer = await Packer.toBuffer(doc);
+  return buffer;
 }
