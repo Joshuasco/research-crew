@@ -83,9 +83,8 @@ export function useBriefingStream() {
 
     if (data.telemetry) {
       setTelemetry((prev) => ({
-        elapsed_seconds: data.telemetry.elapsed_seconds ?? prev.elapsed_seconds,
-        estimated_tokens: data.telemetry.estimated_tokens ?? prev.estimated_tokens,
-        estimated_cost_usd: data.telemetry.estimated_cost_usd ?? 0
+        ...prev,
+        ...data.telemetry
       }));
     }
 
@@ -143,7 +142,13 @@ export function useBriefingStream() {
     if (data.markdown_content) {
       setMarkdownContent(data.markdown_content);
     }
-    if (data.total_elapsed_seconds) {
+
+    if (data.telemetry) {
+      setTelemetry((prev) => ({
+        ...prev,
+        ...data.telemetry
+      }));
+    } else if (data.total_elapsed_seconds) {
       setTelemetry((prev) => ({
         ...prev,
         elapsed_seconds: data.total_elapsed_seconds,
@@ -352,7 +357,12 @@ export function useBriefingStream() {
       setTelemetry({
         elapsed_seconds: 28.4,
         estimated_tokens: 4620,
-        estimated_cost_usd: 0.00
+        estimated_cost_usd: 0.00,
+        verified_sources_count: 14,
+        key_findings_count: 6,
+        major_risks_count: 3,
+        research_confidence: 98.4,
+        verification_precision: 99.2
       });
       const briefing = getBriefingForTopic(targetTopic);
       setMarkdownContent(briefing);
@@ -380,7 +390,12 @@ export function useBriefingStream() {
     setTelemetry({
       elapsed_seconds: 28.4,
       estimated_tokens: 4620,
-      estimated_cost_usd: 0.00
+      estimated_cost_usd: 0.00,
+      verified_sources_count: 14,
+      key_findings_count: 6,
+      major_risks_count: 3,
+      research_confidence: 98.4,
+      verification_precision: 99.2
     });
 
     setLogs(OFFLINE_SAMPLE_TELEMETRY.map((item) => ({

@@ -77,10 +77,11 @@ export function App() {
               topic={topic}
               telemetry={telemetry}
               agentStatus={agentStatus}
+              markdownContent={markdownContent}
             />
 
             {/* Visual Centerpiece: Evidence Confidence Trajectory Graph */}
-            <EvidenceConfidenceGraph />
+            <EvidenceConfidenceGraph telemetry={telemetry} />
 
             {/* Split-Pane Core Presentation Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

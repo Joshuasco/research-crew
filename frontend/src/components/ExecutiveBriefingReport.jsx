@@ -18,12 +18,28 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
 
   const blocks = parseMarkdownBlocks(markdownContent);
 
-  // Group blocks by section heading
+  // Group blocks by section heading (supporting both level 1 and level 2 headings)
   const sections = [];
   let currentSection = { heading: 'Overview', level: 1, blocks: [] };
 
+  const isMandatoryHeading = (headingText) => {
+    const lower = headingText.toLowerCase();
+    return [
+      'executive summary',
+      'market context',
+      'competitor',
+      'metrics',
+      'risk',
+      'regulation',
+      'strategic recommendation',
+      'recommendation',
+      'source ledger',
+      'verified source'
+    ].some((h) => lower.includes(h));
+  };
+
   blocks.forEach((block) => {
-    if (block.type === 'heading' && block.level === 1) {
+    if (block.type === 'heading' && (block.level === 1 || (block.level === 2 && isMandatoryHeading(block.text)))) {
       if (currentSection.blocks.length > 0 || currentSection.heading !== 'Overview') {
         sections.push(currentSection);
       }
@@ -38,20 +54,29 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
 
   // Parse inline risks formatted as "- **Risk Name**: Risk text. *Mitigation: Mitigation text.*"
   const parseRiskItem = (rawItem) => {
-    const boldMatch = rawItem.match(/^\*\*([^*]+)\*\*:\s*(.+)$/);
-    if (!boldMatch) return { title: 'Operational Risk', body: rawItem, mitigation: null };
-
-    const title = boldMatch[1].trim();
-    let remaining = boldMatch[2].trim();
+    let title = 'Identified Risk';
+    let body = rawItem;
     let mitigation = null;
 
-    const mitMatch = remaining.match(/\*Mitigation:\s*([^*]+)\*/i);
-    if (mitMatch) {
-      mitigation = mitMatch[1].trim();
-      remaining = remaining.replace(/\*Mitigation:\s*([^*]+)\*/i, '').trim();
+    const boldMatch = rawItem.match(/^[*_]{2}([^*_]+)[*_]{2}[:–—\s]*(.+)$/);
+    if (boldMatch) {
+      title = boldMatch[1].trim();
+      body = boldMatch[2].trim();
+    } else {
+      const dashMatch = rawItem.match(/^([^:–—]+)[:–—]\s*(.+)$/);
+      if (dashMatch) {
+        title = dashMatch[1].trim();
+        body = dashMatch[2].trim();
+      }
     }
 
-    return { title, body: remaining, mitigation };
+    const mitMatch = body.match(/[*_]?Mitigation[:*_\s]*([^*_\n]+)[*_]?/i);
+    if (mitMatch) {
+      mitigation = mitMatch[1].trim();
+      body = body.replace(/[*_]?Mitigation[:*_\s]*([^*_\n]+)[*_]?/i, '').trim();
+    }
+
+    return { title, body, mitigation };
   };
 
   // Helper to highlight bold text inside regular strings
@@ -493,7 +518,7 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
                       {section.blocks.map((b, bIdx) => {
                         if (b.type === 'list') {
                           return b.items.map((item, itemIdx) => {
-                            const badgeMatch = item.match(/^\[([^\]]+)\]\s*(.+)$/);
+                            const badgeMatch = item.match(/^(?:\d+\.\s*)?(?:\*\*|\*)?\[([^\]]+)\](?:\*\*|\*)?\s*(.+)$/);
                             const badge = badgeMatch ? badgeMatch[1] : `Source ${itemIdx + 1}`;
                             const citation = badgeMatch ? badgeMatch[2] : item;
 

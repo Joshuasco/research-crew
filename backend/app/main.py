@@ -79,6 +79,7 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
 
             research_notes = await researcher_agent.run(topic)
             telemetry.estimate_tokens_from_text(research_notes)
+            telemetry.update_from_research(research_notes)
 
             yield {
                 "event": "agent_telemetry",
@@ -120,6 +121,7 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
                     iteration=iteration
                 )
                 telemetry.estimate_tokens_from_text(draft_markdown)
+                telemetry.update_from_draft(draft_markdown, iteration)
 
                 yield {
                     "event": "agent_telemetry",
@@ -155,6 +157,7 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
                     research_notes=research_notes,
                     iteration=iteration
                 )
+                telemetry.update_from_audit(audit_result, iteration)
 
                 if not audit_result["passed"]:
                     last_critique = audit_result
@@ -204,6 +207,7 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
                     "total_elapsed_seconds": final_telemetry["elapsed_seconds"],
                     "total_tokens": final_telemetry["estimated_tokens"],
                     "total_cost_usd": final_telemetry["estimated_cost_usd"],
+                    "telemetry": final_telemetry,
                     "markdown_content": draft_markdown
                 })
             }

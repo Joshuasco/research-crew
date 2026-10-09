@@ -1,0 +1,23 @@
+# Python Virtual Environments
+venv/
+.venv/
+ENV/
+env/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables
+.env
+.env.local
+
+# Node / Frontend
+node_modules/
+dist/
+
+# OS / Editor metadata
+.DS_Store
+.vscode/
+.idea/
