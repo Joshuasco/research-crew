@@ -40,6 +40,11 @@ Return complete Markdown document text starting with '# Executive Summary' and e
 """
 
 class WriterAgent:
+    def get_crewai_agent(self):
+        """Lazy-import CrewAI Agent definition for CrewAI pipeline workflows."""
+        from app.agents.crew import create_writer_agent
+        return create_writer_agent()
+
     async def run(self, topic: str, research_notes: str, critique: dict = None, iteration: int = 1) -> str:
         logger.info(f"Writer Agent executing (Iteration {iteration}) for topic: '{topic}'")
 
