@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Activity, ShieldCheck } from 'lucide-react';
 
 const PROGRESSION_POINTS = [
   {
@@ -9,7 +8,8 @@ const PROGRESSION_POINTS = [
     confidence: 28,
     evidenceCount: '14 Notes',
     description: 'Querying primary web benchmarks and technical whitepapers',
-    timestamp: '00:06.2'
+    timestamp: '00:06.2',
+    iteration: 1
   },
   {
     step: '02',
@@ -18,7 +18,8 @@ const PROGRESSION_POINTS = [
     confidence: 52,
     evidenceCount: '6 Metrics',
     description: 'Extracting quantitative data and tagging uncertain hypotheses',
-    timestamp: '00:11.4'
+    timestamp: '00:11.4',
+    iteration: 1
   },
   {
     step: '03',
@@ -27,7 +28,8 @@ const PROGRESSION_POINTS = [
     confidence: 68,
     evidenceCount: '6 Sections',
     description: 'Drafting 6 mandatory executive sections from research notes',
-    timestamp: '00:18.8'
+    timestamp: '00:18.8',
+    iteration: 1
   },
   {
     step: '04',
@@ -37,7 +39,8 @@ const PROGRESSION_POINTS = [
     evidenceCount: '1 Uncited Flagged',
     description: 'Audit rejected uncited statistical claim in Market Context',
     timestamp: '00:21.3',
-    isRejection: true
+    isRejection: true,
+    iteration: 1
   },
   {
     step: '05',
@@ -46,7 +49,8 @@ const PROGRESSION_POINTS = [
     confidence: 86,
     evidenceCount: 'Attribution Injected',
     description: 'Revised draft linking 340% benchmark to verified report',
-    timestamp: '00:31.0'
+    timestamp: '00:31.0',
+    iteration: 2
   },
   {
     step: '06',
@@ -56,110 +60,107 @@ const PROGRESSION_POINTS = [
     evidenceCount: '6/6 Verified',
     description: 'Deterministic quality gate passed with zero phantom claims',
     timestamp: '00:36.5',
-    isPassed: true
+    isPassed: true,
+    iteration: 2
   }
 ];
 
 export function EvidenceConfidenceGraph() {
+  const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'iter1' | 'iter2'
   const [activePoint, setActivePoint] = useState(PROGRESSION_POINTS[PROGRESSION_POINTS.length - 1]);
 
-  // Coordinate mapping for SVG (viewBox: 0 0 1000 280)
-  // X: 70 to 950 across 6 points
-  // Y: 240 (0%) down to 35 (100%)
-  const getY = (val) => 240 - (val / 100) * 205;
-  const getX = (idx) => 80 + idx * (860 / (PROGRESSION_POINTS.length - 1));
+  const filteredPoints = PROGRESSION_POINTS.filter((p) => {
+    if (activeFilter === 'iter1') return p.iteration === 1;
+    if (activeFilter === 'iter2') return p.iteration === 2;
+    return true;
+  });
 
-  // Build SVG path points
-  const points = PROGRESSION_POINTS.map((p, idx) => ({
-    x: getX(idx),
-    y: getY(p.confidence),
-    ...p
-  }));
-
-  // Build smooth curve path using cubic bezier
-  let pathD = `M ${points[0].x} ${points[0].y}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const cp1x = p0.x + (p1.x - p0.x) * 0.45;
-    const cp1y = p0.y;
-    const cp2x = p0.x + (p1.x - p0.x) * 0.55;
-    const cp2y = p1.y;
-    pathD += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p1.x} ${p1.y}`;
-  }
-
-  // Area path closing at the bottom
-  const areaD = `${pathD} L ${points[points.length - 1].x} 240 L ${points[0].x} 240 Z`;
-
+  const getY = (val) => 220 - (val / 100) * 180;
+  const chartHeight = 180;
+  const baselineY = 220;
   const thresholdY = getY(95.0);
 
+  const chartWidth = 860;
+  const startX = 75;
+  const slotWidth = chartWidth / Math.max(filteredPoints.length, 1);
+
   return (
-    <div className="bg-neutral-950 border border-neutral-800 rounded-lg p-5 lg:p-6 mb-6 relative overflow-hidden bg-grid-dots">
-      {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-3 border-b border-neutral-800">
-        <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-emerald-400" />
-          <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-white">
-            Evidence Confidence & Audit Verification Trajectory
-          </h2>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-neutral-900 text-neutral-400 border border-neutral-800">
-            Real-Time Provenance Curve
-          </span>
+    <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 md:p-6 mb-6 card-shadow">
+      {/* Header bar matching reference chart header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-[#CBD5CF] dark:border-[#292D33]">
+        <div>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-[#17211D] dark:text-[#F3F4F6] font-sans">
+              Evidence Confidence &amp; Milestone Progression
+            </h3>
+            <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-[#E6F0EA] dark:bg-[#22262B] text-[#176B4D] dark:text-[#34D399] border border-[rgba(23,107,77,0.25)] dark:border-[#292D33]">
+              99.2% Final Confidence
+            </span>
+          </div>
+          <p className="text-xs text-[#38463F] dark:text-[#9CA3AF] mt-0.5 font-sans">
+            Verification confidence per milestone across Researcher, Writer, and Reviewer gates
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-neutral-400 text-[11px]">Threshold Gate:</span>
-          <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-950 border border-emerald-600/60 text-emerald-300 flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-emerald-400" />
-            95.0% EXCEEDED (99.2%)
-          </span>
+        {/* Milestone filter buttons */}
+        <div className="flex items-center rounded-lg border border-[#CBD5CF] dark:border-[#292D33] p-0.5 bg-[#EEF1EF] dark:bg-[#1F2226] text-xs font-medium font-sans">
+          <button
+            onClick={() => setActiveFilter('all')}
+            className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+              activeFilter === 'all'
+                ? 'bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-white shadow-xs font-semibold'
+                : 'text-[#38463F] dark:text-[#9CA3AF] hover:text-[#17211D] dark:hover:text-white'
+            }`}
+          >
+            All Milestones
+          </button>
+          <button
+            onClick={() => setActiveFilter('iter1')}
+            className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+              activeFilter === 'iter1'
+                ? 'bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-white shadow-xs font-semibold'
+                : 'text-[#38463F] dark:text-[#9CA3AF] hover:text-[#17211D] dark:hover:text-white'
+            }`}
+          >
+            Iteration 1
+          </button>
+          <button
+            onClick={() => setActiveFilter('iter2')}
+            className={`px-3 py-1 rounded-md transition-colors cursor-pointer ${
+              activeFilter === 'iter2'
+                ? 'bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-white shadow-xs font-semibold'
+                : 'text-[#38463F] dark:text-[#9CA3AF] hover:text-[#17211D] dark:hover:text-white'
+            }`}
+          >
+            Iteration 2
+          </button>
         </div>
       </div>
 
-      {/* Centerpiece SVG Graph */}
-      <div className="relative w-full overflow-x-auto scrollbar-none">
-        <div className="min-w-[720px]">
-          <svg
-            viewBox="0 0 1000 270"
-            className="w-full h-52 md:h-64 overflow-visible select-none"
-          >
-            <defs>
-              <linearGradient id="evidenceAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.32" />
-                <stop offset="50%" stopColor="#059669" stopOpacity="0.12" />
-                <stop offset="100%" stopColor="#047857" stopOpacity="0.0" />
-              </linearGradient>
-
-              <filter id="emeraldGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Y-Axis Horizontal Grid Lines: 20%, 40%, 60%, 80%, 100% */}
-            {[20, 40, 60, 80, 100].map((level) => {
+      {/* SVG Vertical Bar Chart */}
+      <div className="w-full overflow-x-auto scrollbar-none">
+        <div className="min-w-[680px]">
+          <svg viewBox="0 0 1000 275" className="w-full h-56 md:h-64 select-none">
+            {/* Horizontal Grid lines */}
+            {[0, 20, 40, 60, 80, 100].map((level) => {
               const y = getY(level);
               return (
                 <g key={level}>
                   <line
-                    x1="60"
+                    x1="65"
                     y1={y}
-                    x2="960"
+                    x2="945"
                     y2={y}
-                    stroke="#262626"
-                    strokeWidth="1"
-                    strokeDasharray={level === 100 ? 'none' : '3 3'}
+                    stroke="currentColor"
+                    className="text-[#CBD5CF] dark:text-[#292D33]"
+                    strokeWidth={level === 0 ? '1.5' : '1'}
+                    strokeDasharray={level === 0 ? 'none' : '3 3'}
                   />
                   <text
-                    x="50"
-                    y={y + 3}
+                    x="55"
+                    y={y + 3.5}
                     textAnchor="end"
-                    fill="#737373"
-                    fontSize="10"
-                    fontFamily="monospace"
+                    className="fill-[#38463F] dark:fill-[#9CA3AF] text-[10px] font-mono font-semibold"
                   >
                     {level}%
                   </text>
@@ -167,124 +168,135 @@ export function EvidenceConfidenceGraph() {
               );
             })}
 
-            {/* Verification Threshold Target Line (95%) */}
+            {/* Restrained 95% Audit Pass Threshold Reference Line */}
             <line
-              x1="60"
+              x1="65"
               y1={thresholdY}
-              x2="960"
+              x2="945"
               y2={thresholdY}
-              stroke="#10b981"
-              strokeWidth="1"
-              strokeDasharray="4 4"
-              strokeOpacity="0.6"
+              stroke="#176B4D"
+              strokeWidth="1.5"
+              strokeDasharray="5 4"
+              strokeOpacity="0.85"
+              className="dark:stroke-[#34D399]"
             />
-            <text
-              x="960"
-              y={thresholdY - 5}
-              textAnchor="end"
-              fill="#34d399"
-              fontSize="9"
-              fontFamily="monospace"
-              fontWeight="bold"
-            >
-              95% AUDIT PASS GATE
-            </text>
+            {/* Clean threshold label positioned on the left with background cutout to eliminate collision with 99.2% final bar */}
+            <g>
+              <rect
+                x="68"
+                y={thresholdY - 14}
+                width="168"
+                height="12"
+                rx="2"
+                className="fill-white dark:fill-[#181A1D]"
+              />
+              <text
+                x="72"
+                y={thresholdY - 4}
+                textAnchor="start"
+                fill="#176B4D"
+                className="text-[9px] font-mono font-bold dark:fill-[#34D399] tracking-wider select-none"
+              >
+                95.0% AUDIT PASS THRESHOLD
+              </text>
+            </g>
 
-            {/* Shaded Area Under Curve */}
-            <path d={areaD} fill="url(#evidenceAreaGrad)" />
-
-            {/* Main Luminous Curve */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="#10b981"
-              strokeWidth="2.75"
-              strokeLinecap="round"
-              filter="url(#emeraldGlow)"
-            />
-
-            {/* Data Points & Markers */}
-            {points.map((p, idx) => {
+            {/* Vertical Bars and Milestone Labels */}
+            {filteredPoints.map((p, idx) => {
               const isSelected = activePoint?.step === p.step;
-              const isRejection = p.isRejection;
-              const isPassed = p.isPassed;
+              const slotCenter = startX + idx * slotWidth + slotWidth / 2;
+              const barWidth = Math.min(54, Math.max(34, slotWidth * 0.42));
+              const barHeight = Math.max(4, (p.confidence / 100) * chartHeight);
+              const barY = baselineY - barHeight;
+              const barX = slotCenter - barWidth / 2;
 
-              const pinColor = isRejection ? '#ef4444' : isPassed ? '#10b981' : '#34d399';
+              // Color palette: Forest Green as brand accent, neutral grey for flagged/rejection gate
+              const barColorClass = p.isRejection
+                ? 'fill-[#38463F] dark:fill-[#6B7280]'
+                : 'fill-[#176B4D] dark:fill-[#34D399]';
 
               return (
                 <g
-                  key={idx}
+                  key={p.step}
                   className="cursor-pointer group"
                   onClick={() => setActivePoint(p)}
+                  onMouseEnter={() => setActivePoint(p)}
                 >
-                  {/* Subtle vertical milestone guide */}
-                  <line
-                    x1={p.x}
-                    y1={p.y}
-                    x2={p.x}
-                    y2="240"
-                    stroke="#27272a"
-                    strokeWidth="1"
-                    strokeDasharray="2 2"
+                  {/* Subtle column hover background target */}
+                  <rect
+                    x={slotCenter - slotWidth / 2 + 4}
+                    y="35"
+                    width={slotWidth - 8}
+                    height="190"
+                    rx="6"
+                    fill="transparent"
+                    className="group-hover:fill-black/[0.03] dark:group-hover:fill-white/[0.04] transition-colors"
                   />
 
-                  {/* Outer pulse circle when selected */}
+                  {/* Vertical Bar */}
+                  <rect
+                    x={barX}
+                    y={barY}
+                    width={barWidth}
+                    height={barHeight}
+                    rx="4"
+                    className={`${barColorClass} transition-opacity ${
+                      isSelected ? 'opacity-100 ring-2' : 'opacity-85 group-hover:opacity-100'
+                    }`}
+                  />
+
+                  {/* Selection Indicator Ring/Border for active bar */}
                   {isSelected && (
-                    <circle
-                      cx={p.x}
-                      cy={p.y}
-                      r="10"
+                    <rect
+                      x={barX - 2}
+                      y={barY - 2}
+                      width={barWidth + 4}
+                      height={barHeight + 2}
+                      rx="6"
                       fill="none"
-                      stroke={pinColor}
-                      strokeWidth="1.5"
-                      opacity="0.6"
-                      className="animate-ping"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="text-[#17211D] dark:text-white"
+                      opacity="0.4"
                     />
                   )}
 
-                  {/* Outer Ring */}
-                  <circle
-                    cx={p.x}
-                    cy={p.y}
-                    r={isSelected ? '6' : '4.5'}
-                    fill="#09090b"
-                    stroke={pinColor}
-                    strokeWidth={isSelected ? '2.5' : '2'}
-                    className="transition-all duration-150"
-                  />
-
-                  {/* Inner Core */}
-                  <circle
-                    cx={p.x}
-                    cy={p.y}
-                    r={isSelected ? '3' : '2'}
-                    fill={pinColor}
-                  />
-
-                  {/* Score Label above point */}
+                  {/* Value readout directly on top of the bar */}
                   <text
-                    x={p.x}
-                    y={p.y - 12}
+                    x={slotCenter}
+                    y={Math.max(barY - 8, 30)}
                     textAnchor="middle"
-                    fill={isRejection ? '#fca5a5' : '#e5e5e5'}
-                    fontSize="11"
-                    fontFamily="monospace"
-                    fontWeight="bold"
+                    className={`text-[11px] font-mono font-bold ${
+                      isSelected
+                        ? 'fill-[#17211D] dark:fill-white'
+                        : 'fill-[#17211D] dark:fill-[#D1D5DB]'
+                    }`}
                   >
                     {p.confidence}%
                   </text>
 
-                  {/* X-Axis Milestone Label below */}
+                  {/* X-axis Milestone Phase Label */}
                   <text
-                    x={p.x}
-                    y="256"
+                    x={slotCenter}
+                    y="242"
                     textAnchor="middle"
-                    fill={isSelected ? '#ffffff' : '#737373'}
-                    fontSize="9.5"
-                    fontFamily="monospace"
-                    fontWeight={isSelected ? 'bold' : 'normal'}
+                    className={`text-[10px] font-sans ${
+                      isSelected
+                        ? 'fill-[#17211D] dark:fill-white font-bold'
+                        : 'fill-[#17211D] dark:fill-[#D1D5DB] font-semibold'
+                    }`}
                   >
                     {p.phase}
+                  </text>
+
+                  {/* X-axis Agent & Timestamp Sublabel */}
+                  <text
+                    x={slotCenter}
+                    y="258"
+                    textAnchor="middle"
+                    className="text-[9px] font-mono fill-[#38463F] dark:fill-[#9CA3AF]"
+                  >
+                    {p.agent} • {p.timestamp}
                   </text>
                 </g>
               );
@@ -293,28 +305,26 @@ export function EvidenceConfidenceGraph() {
         </div>
       </div>
 
-      {/* Selected Milestone Inspection Card */}
+      {/* Selected Point Inspection Detail */}
       {activePoint && (
-        <div className="mt-4 p-3.5 bg-neutral-900 border border-neutral-800 rounded-md flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs font-mono">
+        <div className="mt-4 p-3.5 bg-[#F4F7F5] dark:bg-[#1F2226] border border-[#CBD5CF] dark:border-[#292D33] rounded-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs font-mono">
           <div className="flex items-center gap-3">
-            <span className={`w-7 h-7 rounded flex items-center justify-center font-bold text-xs ${
-              activePoint.isRejection
-                ? 'bg-red-950 text-red-300 border border-red-800'
-                : activePoint.isPassed
-                ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                : 'bg-neutral-800 text-neutral-200 border border-neutral-700'
-            }`}>
+            <span className="w-7 h-7 rounded-md bg-white dark:bg-[#22262B] border border-[#CBD5CF] dark:border-[#292D33] text-[#17211D] dark:text-white font-bold text-xs flex items-center justify-center shrink-0">
               {activePoint.step}
             </span>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-white uppercase">{activePoint.phase}</span>
-                <span className="text-neutral-500">•</span>
-                <span className="text-neutral-400">Agent: <strong className="text-neutral-200">{activePoint.agent}</strong></span>
-                <span className="text-neutral-500">•</span>
-                <span className="text-neutral-400">{activePoint.timestamp}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-bold text-[#17211D] dark:text-[#F3F4F6] uppercase font-sans">
+                  {activePoint.phase}
+                </span>
+                <span className="text-[#8FA097] dark:text-[#4B5563]">•</span>
+                <span className="text-[#38463F] dark:text-[#9CA3AF]">
+                  Agent: <strong className="text-[#17211D] dark:text-white">{activePoint.agent}</strong>
+                </span>
+                <span className="text-[#8FA097] dark:text-[#4B5563]">•</span>
+                <span className="text-[#38463F] dark:text-[#9CA3AF]">{activePoint.timestamp}</span>
               </div>
-              <p className="text-neutral-400 text-[11px] font-sans mt-0.5">
+              <p className="text-[#38463F] dark:text-[#9CA3AF] text-[11px] font-sans mt-0.5">
                 {activePoint.description}
               </p>
             </div>
@@ -322,12 +332,18 @@ export function EvidenceConfidenceGraph() {
 
           <div className="flex items-center gap-4 self-end md:self-auto shrink-0">
             <div className="text-right">
-              <span className="text-[10px] text-neutral-500 uppercase block">Evidence Artifact</span>
-              <span className="font-bold text-white">{activePoint.evidenceCount}</span>
+              <span className="text-[10px] text-[#4E5C55] dark:text-[#9CA3AF] uppercase block font-sans font-medium">
+                Evidence
+              </span>
+              <span className="font-semibold text-[#17211D] dark:text-white">
+                {activePoint.evidenceCount}
+              </span>
             </div>
-            <div className="text-right pl-3 border-l border-neutral-800">
-              <span className="text-[10px] text-neutral-500 uppercase block">Confidence Score</span>
-              <span className={`font-bold text-base ${activePoint.isRejection ? 'text-red-400' : 'text-emerald-400'}`}>
+            <div className="text-right pl-3 border-l border-[#CBD5CF] dark:border-[#292D33]">
+              <span className="text-[10px] text-[#4E5C55] dark:text-[#9CA3AF] uppercase block font-sans font-medium">
+                Confidence
+              </span>
+              <span className="font-bold text-base text-[#176B4D] dark:text-[#34D399]">
                 {activePoint.confidence}%
               </span>
             </div>

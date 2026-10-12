@@ -16,7 +16,7 @@ export function ExportActions({ markdownContent, topic, agentStatus }) {
   if (!markdownContent) return null;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(markdownContent);
+    navigator.clipboard.writeText(markdownContent).catch(() => {});
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -49,72 +49,72 @@ export function ExportActions({ markdownContent, topic, agentStatus }) {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-1.5 md:gap-2 font-sans text-xs">
-        {/* Download .MD */}
+      <div className="flex flex-wrap items-center gap-1.5 font-sans text-xs">
+        {/* Download .MD (Primary Action) */}
         <button
           onClick={() => exportMarkdown(markdownContent, topic)}
-          className="px-2.5 py-1.5 rounded bg-white text-black font-semibold hover:bg-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+          className="px-2.5 py-1.5 rounded-lg bg-[#176B4D] hover:bg-[#12563D] text-white dark:bg-white dark:text-[#17211D] dark:hover:bg-neutral-200 font-semibold transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
           title="Download Client-Side Blob (.md)"
         >
           <Download className="w-3.5 h-3.5" />
-          Download .MD
+          <span>.MD</span>
         </button>
 
         {/* Download .TXT */}
         <button
           onClick={() => exportText(markdownContent, topic)}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700 font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
-          title="Download Client-Side Blob (.txt)"
+          className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-[#D1D5DB] hover:bg-[#F4F7F5] dark:hover:bg-[#22262B] border border-[#CBD5CF] dark:border-[#292D33] font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+          title="Download Plain Text (.txt)"
         >
-          <FileText className="w-3.5 h-3.5" />
-          Download .TXT
+          <FileText className="w-3.5 h-3.5 text-[#4E5C55] dark:text-[#9CA3AF]" />
+          <span>.TXT</span>
         </button>
 
         {/* Download .PDF */}
         <button
           onClick={handleDownloadPdf}
           disabled={isGeneratingPdf}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700 font-medium transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-          title="Download Professional Formatted Report (.pdf)"
+          className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-[#D1D5DB] hover:bg-[#F4F7F5] dark:hover:bg-[#22262B] border border-[#CBD5CF] dark:border-[#292D33] font-medium transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          title="Download Formatted PDF (.pdf)"
         >
           {isGeneratingPdf ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#176B4D]" />
           ) : (
-            <FileDown className="w-3.5 h-3.5 text-neutral-300" />
+            <FileDown className="w-3.5 h-3.5 text-[#4E5C55] dark:text-[#9CA3AF]" />
           )}
-          Download .PDF
+          <span>.PDF</span>
         </button>
 
         {/* Download .DOCX */}
         <button
           onClick={handleDownloadDocx}
           disabled={isGeneratingDocx}
-          className="px-2.5 py-1.5 rounded bg-neutral-800 text-neutral-200 hover:bg-neutral-700 border border-neutral-700 font-medium transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+          className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-[#D1D5DB] hover:bg-[#F4F7F5] dark:hover:bg-[#22262B] border border-[#CBD5CF] dark:border-[#292D33] font-medium transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           title="Download Microsoft Word Document (.docx)"
         >
           {isGeneratingDocx ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-neutral-400" />
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-[#176B4D]" />
           ) : (
-            <FileText className="w-3.5 h-3.5 text-neutral-300" />
+            <FileText className="w-3.5 h-3.5 text-[#4E5C55] dark:text-[#9CA3AF]" />
           )}
-          Download .DOCX
+          <span>.DOCX</span>
         </button>
 
         {/* Copy Text */}
         <button
           onClick={handleCopy}
-          className="px-2.5 py-1.5 rounded bg-neutral-900 text-neutral-300 hover:bg-neutral-800 border border-neutral-800 font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
+          className="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#181A1D] text-[#17211D] dark:text-[#D1D5DB] hover:bg-[#F4F7F5] dark:hover:bg-[#22262B] border border-[#CBD5CF] dark:border-[#292D33] font-medium transition-colors flex items-center gap-1.5 cursor-pointer"
           title="Copy Markdown to Clipboard"
         >
           {copied ? (
             <>
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-emerald-400 font-semibold">Copied!</span>
+              <Check className="w-3.5 h-3.5 text-[#176B4D] dark:text-[#34D399]" />
+              <span className="text-[#176B4D] dark:text-[#34D399] font-semibold">Copied!</span>
             </>
           ) : (
             <>
-              <Copy className="w-3.5 h-3.5" />
-              Copy Text
+              <Copy className="w-3.5 h-3.5 text-[#4E5C55] dark:text-[#9CA3AF]" />
+              <span>Copy</span>
             </>
           )}
         </button>
@@ -122,12 +122,12 @@ export function ExportActions({ markdownContent, topic, agentStatus }) {
 
       {/* Non-blocking error notification */}
       {toast && (
-        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-3.5 py-2.5 rounded-lg bg-neutral-900 border border-red-700 text-red-200 text-xs font-sans font-normal shadow-2xl animate-fade-in">
-          <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-[#17211D] text-white border border-[#374151] text-xs font-sans shadow-xl">
+          <AlertCircle className="w-4 h-4 text-[#9CA3AF] shrink-0" />
           <span>{toast.message}</span>
           <button
             onClick={() => setToast(null)}
-            className="ml-2 text-neutral-400 hover:text-white cursor-pointer font-bold"
+            className="ml-2 text-[#9CA3AF] hover:text-white cursor-pointer font-bold"
             title="Dismiss"
           >
             ✕
