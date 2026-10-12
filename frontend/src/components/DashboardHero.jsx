@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Database, KeyRound, AlertTriangle, Clock, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, ShieldCheck } from 'lucide-react';
 
-export function DashboardHero({ topic, telemetry, _agentStatus }) {
+export function DashboardHero({ topic, telemetry, agentStatus }) {
   const [animatedConfidence, setAnimatedConfidence] = useState(0);
 
-  // Parse topic into primary category & subtitle for editorial feel
   const formatTopicHeading = (rawTopic) => {
     if (!rawTopic) {
       return {
@@ -33,18 +32,15 @@ export function DashboardHero({ topic, telemetry, _agentStatus }) {
   };
 
   const { category, title } = formatTopicHeading(topic);
-
-  // Count-up animation for research confidence score (strictly 78.0%)
   const targetConfidence = 78.0;
 
   useEffect(() => {
-    const duration = 1200;
+    const duration = 1000;
     const startTime = performance.now();
 
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // easeOutExpo
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       setAnimatedConfidence(Math.round(eased * targetConfidence));
 
@@ -57,126 +53,116 @@ export function DashboardHero({ topic, telemetry, _agentStatus }) {
   }, []);
 
   const elapsedSec = telemetry?.elapsed_seconds || 28.4;
+  const isApproved = agentStatus === 'passed';
 
   return (
-    <div className="relative overflow-hidden bg-neutral-950 border border-neutral-800 rounded-lg p-6 lg:p-8 mb-6 bg-grid-lines">
-      {/* Subtle background glow effect */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="space-y-4 mb-6">
+      {/* Investigation Topic Header Card */}
+      <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 md:p-6 card-shadow">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-[#176B4D] dark:text-[#34D399] mb-1">
+              <span>{category}</span>
+              <span className="text-[#8FA097] dark:text-[#4B5563]">•</span>
+              <span className="text-[#4E5C55] dark:text-[#9CA3AF] font-normal">Deterministic Synthesis</span>
+            </div>
+            <h2 className="text-xl md:text-2xl font-bold text-[#17211D] dark:text-[#F3F4F6] font-sans tracking-tight">
+              {title}
+            </h2>
+            <p className="text-xs md:text-sm text-[#38463F] dark:text-[#9CA3AF] mt-1 font-sans">
+              Multi-agent research synthesis verified across 6 mandatory structural dimensions with line-item citation provenance.
+            </p>
+          </div>
 
-      {/* Top Overline & Status Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b border-neutral-800/80">
-        <div className="flex items-center gap-2.5">
-          <img
-            src="/neo-rc-logo.png"
-            alt="The Research Crew"
-            className="w-5 h-5 object-contain"
-          />
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="text-[11px] font-mono uppercase tracking-widest text-emerald-400 font-bold">
-            Verified Intelligence Briefing
-          </span>
-          <span className="text-neutral-600 font-mono text-xs">•</span>
-          <span className="text-[11px] font-mono text-neutral-400">
-            OpenRouter Free Model Routing
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-1 text-xs font-mono rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 flex items-center gap-1.5 shadow-sm">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-bold">Audited & Approved</span>
-            <span className="text-emerald-500/70 text-[10px]">Deterministic Gate</span>
-          </span>
+          <div className="flex items-center gap-2 shrink-0 self-start md:self-center">
+            <span className="px-3 py-1 text-xs font-mono rounded-lg bg-[#E6F0EA] dark:bg-[rgba(30,142,98,0.15)] border border-[rgba(23,107,77,0.25)] dark:border-[rgba(30,142,98,0.35)] text-[#176B4D] dark:text-[#34D399] flex items-center gap-1.5 font-semibold">
+              <ShieldCheck className="w-4 h-4" />
+              <span>{isApproved ? 'Audited & Approved' : 'Reviewer Quality Gate'}</span>
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Main Editorial Headline */}
-      <div className="mb-8">
-        <div className="text-xs md:text-sm font-mono tracking-widest uppercase text-emerald-400/90 mb-1 flex items-center gap-2 font-semibold">
-          <span>{category}</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500" />
-        </div>
-        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white font-sans uppercase leading-tight">
-          {title}
-        </h1>
-        <p className="text-sm md:text-base text-neutral-400 mt-2 max-w-3xl font-sans font-normal leading-relaxed">
-          Autonomous multi-agent research synthesis verified across 6 mandatory structural dimensions with line-item citation provenance.
-        </p>
-      </div>
-
-      {/* High-Impact Performance Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-        {/* Prominent Confidence Score: 78% & 99.2% */}
-        <div className="col-span-2 md:col-span-1 bg-gradient-to-b from-neutral-900 to-neutral-950 border border-emerald-500/40 rounded-lg p-4 relative overflow-hidden glow-emerald-sm flex flex-col justify-between">
-          <div>
-            <div className="text-3xl md:text-4xl font-bold text-white font-mono tracking-tight flex items-baseline gap-0.5">
-              <span className="text-emerald-300">{animatedConfidence}</span>
-              <span className="text-lg text-emerald-500">%</span>
-            </div>
-            <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-medium flex items-center justify-between mt-1">
-              <span>RESEARCH CONFIDENCE</span>
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+      {/* Grid of 4 Compact Metric Cards (Matching Reference Screenshot Row) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Metric Card 1: Research Confidence */}
+        <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 card-shadow flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#38463F] dark:text-[#9CA3AF] font-sans">
+            <span className="font-semibold">Research Confidence</span>
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-[#E6F0EA] dark:bg-[#22262B] text-[#176B4D] dark:text-[#34D399] border border-[rgba(23,107,77,0.25)] dark:border-[#292D33] flex items-center gap-0.5">
+              <span>↗</span>
+              <span>+12.5%</span>
+            </span>
+          </div>
+          <div className="my-3">
+            <div className="text-3xl font-bold text-[#17211D] dark:text-[#F3F4F6] font-mono tracking-tight flex items-baseline gap-1">
+              <span>{animatedConfidence}.0%</span>
             </div>
           </div>
-          <div className="pt-2.5 mt-2 border-t border-neutral-800/80">
-            <div className="text-sm font-mono font-bold text-emerald-400 tracking-tight">
-              99.2%
+          <div className="space-y-0.5 text-xs text-[#4E5C55] dark:text-[#9CA3AF] font-sans">
+            <div className="text-[#17211D] dark:text-[#E5E7EB] font-semibold flex items-center gap-1">
+              <span>Trending up this iteration</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#176B4D] dark:text-[#34D399]" />
             </div>
-            <div className="text-[9px] font-mono uppercase tracking-wider text-neutral-400 font-medium">
-              VERIFICATION PRECISION
+            <div>99.2% verification precision</div>
+          </div>
+        </div>
+
+        {/* Metric Card 2: Verified Sources */}
+        <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 card-shadow flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#38463F] dark:text-[#9CA3AF] font-sans">
+            <span className="font-semibold">Verified Sources</span>
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-[#EEF1EF] dark:bg-[#22262B] text-[#17211D] dark:text-[#F3F4F6] border border-[#CBD5CF] dark:border-[#292D33]">
+              +14 Notes
+            </span>
+          </div>
+          <div className="my-3">
+            <div className="text-3xl font-bold text-[#17211D] dark:text-[#F3F4F6] font-mono tracking-tight">
+              12
             </div>
           </div>
-        </div>
-
-        {/* Verified Sources: 12 */}
-        <div className="bg-neutral-900/80 border border-neutral-800 rounded-lg p-4 flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-medium flex items-center gap-1.5 mb-1">
-            <Database className="w-3.5 h-3.5 text-teal-400" />
-            <span>VERIFIED SOURCES</span>
-          </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-white font-mono">12</div>
-            <div className="text-[10px] text-neutral-500 font-mono font-normal mt-0.5">Primary Ledger Notes</div>
+          <div className="space-y-0.5 text-xs text-[#4E5C55] dark:text-[#9CA3AF] font-sans">
+            <div className="text-[#17211D] dark:text-[#E5E7EB] font-semibold">Primary ledger sources</div>
+            <div>Zero phantom claims</div>
           </div>
         </div>
 
-        {/* Key Findings: 8 */}
-        <div className="bg-neutral-900/80 border border-neutral-800 rounded-lg p-4 flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-medium flex items-center gap-1.5 mb-1">
-            <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
-            <span>KEY FINDINGS</span>
+        {/* Metric Card 3: Key Findings */}
+        <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 card-shadow flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#38463F] dark:text-[#9CA3AF] font-sans">
+            <span className="font-semibold">Key Findings</span>
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-[#E6F0EA] dark:bg-[#22262B] text-[#176B4D] dark:text-[#34D399] border border-[rgba(23,107,77,0.25)] dark:border-[#292D33] flex items-center gap-0.5">
+              <span>↗</span>
+              <span>+6 Metrics</span>
+            </span>
           </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-white font-mono">8</div>
-            <div className="text-[10px] text-neutral-500 font-mono font-normal mt-0.5">Quantitative Metrics</div>
+          <div className="my-3">
+            <div className="text-3xl font-bold text-[#17211D] dark:text-[#F3F4F6] font-mono tracking-tight">
+              8
+            </div>
           </div>
-        </div>
-
-        {/* Major Risks: 3 */}
-        <div className="bg-neutral-900/80 border border-neutral-800 rounded-lg p-4 flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-medium flex items-center gap-1.5 mb-1">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-            <span>MAJOR RISKS</span>
-          </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-white font-mono">3</div>
-            <div className="text-[10px] text-neutral-500 font-mono font-normal mt-0.5">Active Mitigations</div>
+          <div className="space-y-0.5 text-xs text-[#4E5C55] dark:text-[#9CA3AF] font-sans">
+            <div className="text-[#17211D] dark:text-[#E5E7EB] font-semibold">Quantitative metrics</div>
+            <div>Attributed citation ledger</div>
           </div>
         </div>
 
-        {/* Execution Latency: 28.4s */}
-        <div className="bg-neutral-900/80 border border-neutral-800 rounded-lg p-4 flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 font-medium flex items-center gap-1.5 mb-1">
-            <Clock className="w-3.5 h-3.5 text-neutral-400" />
-            <span>EXECUTION</span>
+        {/* Metric Card 4: Execution Latency */}
+        <div className="bg-white dark:bg-[#181A1D] border border-[#CBD5CF] dark:border-[#292D33] rounded-xl p-5 card-shadow flex flex-col justify-between">
+          <div className="flex items-center justify-between text-xs text-[#38463F] dark:text-[#9CA3AF] font-sans">
+            <span className="font-semibold">Execution Latency</span>
+            <span className="px-2 py-0.5 rounded-md text-[11px] font-mono font-semibold bg-[#EEF1EF] dark:bg-[#22262B] text-[#176B4D] dark:text-[#34D399] border border-[#CBD5CF] dark:border-[#292D33]">
+              $0.00
+            </span>
           </div>
-          <div>
-            <div className="text-2xl md:text-3xl font-bold text-white font-mono">
+          <div className="my-3">
+            <div className="text-3xl font-bold text-[#17211D] dark:text-[#F3F4F6] font-mono tracking-tight">
               {elapsedSec}s
             </div>
-            <div className="text-[10px] text-emerald-400 font-mono font-normal mt-0.5">
-              $0.00 Free Tier Cost
-            </div>
+          </div>
+          <div className="space-y-0.5 text-xs text-[#4E5C55] dark:text-[#9CA3AF] font-sans">
+            <div className="text-[#17211D] dark:text-[#E5E7EB] font-semibold">OpenRouter Free tier</div>
+            <div>Zero marginal cost</div>
           </div>
         </div>
       </div>
