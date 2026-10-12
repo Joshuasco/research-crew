@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
@@ -8,12 +10,62 @@
 :root {
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+
+  /* Design Tokens - Light Theme (Refined High-Contrast Aesthetic) */
+  --bg-canvas: #EEF1EF;
+  --bg-card: #FFFFFF;
+  --bg-card-subtle: #F4F7F5;
+  --bg-card-hover: #EAEFEA;
+  --border-subtle: #CBD5CF;
+  --border-strong: #B0BCB6;
+  
+  --text-primary: #17211D;
+  --text-secondary: #38463F;
+  --text-muted: #4E5C55;
+
+  --brand-accent: #176B4D;
+  --brand-accent-hover: #12563D;
+  --brand-accent-subtle: #E6F0EA;
+  --brand-accent-border: rgba(23, 107, 77, 0.28);
+  --brand-accent-text: #176B4D;
+
+  --chart-curve: #176B4D;
+  --chart-fill-start: rgba(23, 107, 77, 0.20);
+  --chart-fill-end: rgba(23, 107, 77, 0.00);
+  --chart-grid: #CBD5CF;
+  --chart-text: #38463F;
+}
+
+.dark {
+  /* Design Tokens - Dark Theme */
+  --bg-canvas: #0F1113;
+  --bg-card: #181A1D;
+  --bg-card-subtle: #1F2226;
+  --bg-card-hover: #26292F;
+  --border-subtle: #292D33;
+  --border-strong: #3A3F48;
+
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+
+  --brand-accent: #1E8E62;
+  --brand-accent-hover: #26A875;
+  --brand-accent-subtle: rgba(30, 142, 98, 0.16);
+  --brand-accent-border: rgba(30, 142, 98, 0.35);
+  --brand-accent-text: #34D399;
+
+  --chart-curve: #1E8E62;
+  --chart-fill-start: rgba(30, 142, 98, 0.25);
+  --chart-fill-end: rgba(30, 142, 98, 0.00);
+  --chart-grid: #292D33;
+  --chart-text: #9CA3AF;
 }
 
 @layer base {
   body {
-    background-color: #070709;
-    color: #f3f4f6;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -21,77 +73,30 @@
   }
 }
 
-/* Custom Editorial / Terminal Scrollbar */
+/* Restrained Minimal Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 2px;
+  background: var(--border-strong);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--text-muted);
 }
 
-/* Subtle Terminal Grid & Dot Textures */
-.bg-grid-dots {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 20px 20px;
+/* Restrained natural dashboard card shadow for crisp visual separation */
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(23, 33, 29, 0.07), 0 2px 6px -1px rgba(23, 33, 29, 0.05);
 }
 
-.bg-grid-lines {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
-
-/* Luminous Glow Effects */
-.glow-emerald-sm {
-  box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.2);
-}
-
-.glow-emerald-md {
-  box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.3);
-}
-
-.glow-emerald-lg {
-  box-shadow: 0 0 45px -8px rgba(16, 185, 129, 0.25);
-}
-
-.glow-border-emerald {
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 0 12px -2px rgba(16, 185, 129, 0.25);
-}
-
-/* Keyframes for subtle live pulsing */
-@keyframes pulseBeam {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-.animate-pulse-beam {
-  animation: pulseBeam 2s ease-in-out infinite;
-}
-
-@keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(1000%); }
-}
-
-.animate-scanline {
-  animation: scanline 8s linear infinite;
+.dark .card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
 }
