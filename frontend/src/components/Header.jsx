@@ -1,11 +1,37 @@
-import React from 'react';
-import { ShieldCheck, Zap, RotateCcw, Cpu, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Sun, Moon } from 'lucide-react';
 
-export function Header({ isStreaming, isDemoMode, onRunDemo, onLoadDemo, onReset }) {
+export function Header({ isDemoMode, onReset }) {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('rc_theme') || 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+    } else {
+      root.classList.remove('light');
+    }
+    localStorage.setItem('rc_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   return (
-    <header className="border-b border-neutral-800 bg-neutral-950/95 backdrop-blur-md text-white px-6 py-3.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sticky top-0 z-50">
-      {/* Brand & Mission Tagline */}
-      <div className="flex items-center gap-3.5">
+    <header className="border-b border-neutral-800 bg-neutral-950/95 backdrop-blur-md text-white px-4 sm:px-6 py-3 sm:py-3.5 flex flex-row items-center justify-between gap-3 sm:gap-4 sticky top-0 z-50">
+      {/* Brand & Mission Tagline (Clickable to Landing Page) */}
+      <button
+        type="button"
+        onClick={onReset}
+        className="flex items-center gap-2.5 sm:gap-3.5 text-left cursor-pointer hover:opacity-85 transition-opacity focus:outline-none min-w-0"
+        title="Return to Landing Page"
+      >
         <img
           src="/neo-rc-logo.png"
           alt="The Research Crew Logo"
@@ -23,37 +49,21 @@ export function Header({ isStreaming, isDemoMode, onRunDemo, onLoadDemo, onReset
             )}
           </div>
         </div>
-      </div>
+      </button>
 
-      {/* Presentation & Demo Controls */}
+      {/* Right Header Controls */}
       <div className="flex items-center gap-2 self-end md:self-auto flex-wrap">
         <button
-          onClick={onRunDemo}
-          disabled={isStreaming}
-          className="px-3 py-1.5 text-xs font-sans font-medium rounded border border-emerald-500/40 bg-emerald-950/40 text-emerald-300 hover:bg-emerald-900/60 hover:border-emerald-400 disabled:opacity-40 transition-all flex items-center gap-1.5 cursor-pointer glow-emerald-sm"
-          title="Run full 3-agent progression simulation for audience presentations"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          className="p-2 rounded-lg border border-neutral-800 bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 hover:border-neutral-700 transition-colors flex items-center justify-center cursor-pointer"
         >
-          <Zap className="w-3.5 h-3.5 text-emerald-400" />
-          ⚡ Run Interactive Demo
-        </button>
-
-        <button
-          onClick={onLoadDemo}
-          disabled={isStreaming}
-          className="px-3 py-1.5 text-xs font-sans font-medium rounded border border-neutral-700 bg-neutral-900 text-neutral-300 hover:bg-neutral-800 hover:text-white disabled:opacity-40 transition-colors flex items-center gap-1.5 cursor-pointer"
-          title="Instantly load cached verified briefing without waiting"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-neutral-400" />
-          Instant Briefing
-        </button>
-
-        <button
-          onClick={onReset}
-          className="px-3 py-1.5 text-xs font-sans font-medium rounded border border-neutral-800 bg-neutral-950 text-neutral-400 hover:text-white hover:bg-neutral-900 hover:border-neutral-700 transition-colors flex items-center gap-1.5 cursor-pointer"
-          title="Reset to clean initial research prompt"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Reset Demo
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-neutral-300" />
+          )}
         </button>
       </div>
     </header>

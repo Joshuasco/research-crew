@@ -21,6 +21,5 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()
-
 os.makedirs(os.path.join(settings.LOG_DIR, "rejections"), exist_ok=True)
 os.makedirs(settings.DATA_DIR, exist_ok=True)

@@ -49,9 +49,9 @@ All content MUST focus exclusively on the research topic, including tabular data
 def create_reviewer_agent(llm=None) -> Agent:
     return Agent(
         role="Compliance & Quality Audit Reviewer",
-        goal="Audit executive briefing drafts against mandatory structural dimensions and source attribution standards.",
+        goal="Audit executive briefing drafts against mandatory structural dimensions, source attribution standards, and ensure the total number of verified sources are all listed in the document's Verified Source Ledger for reference.",
         backstory="""You are Agent 3 ('The Teeth') in a 3-agent research crew enforcing quality control.
-You verify that all 6 mandatory sections are fully present and that every metric maps cleanly to primary source notes without hallucination.""",
+You verify that all 6 mandatory sections are fully present, that every metric maps cleanly to primary source notes without hallucination, and that the total number of verified sources are all explicitly listed in the '# Verified Source Ledger' section of the document for reference.""",
         verbose=True,
         allow_delegation=False,
         llm=llm or get_crewai_llm()
@@ -78,7 +78,7 @@ class ResearchCrewWorkflow:
         )
 
         review_task = Task(
-            description="Audit the drafted executive briefing for 6 mandatory sections and source citations.",
+            description="Audit the drafted executive briefing for 6 mandatory sections, source citations, and verify that all verified sources are listed in the document's '# Verified Source Ledger' section for reference.",
             expected_output="Final audited executive briefing or audit critique report.",
             agent=self.reviewer
         )

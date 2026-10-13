@@ -18,10 +18,94 @@ MANDATORY_HEADINGS = [
 class ReviewerAuditEngine:
     """
     Deterministic Reviewer Audit Engine ("The Teeth")
-    Enforces non-negotiable verification checks on drafted executive briefs.
+    Enforces non-negotiable verification checks on drafted executive briefs,
+    including ensuring all verified sources are listed in the document's
+    Verified Source Ledger section for reference.
     """
 
-    def audit_draft(self, draft_markdown: str, research_notes: str, iteration: int) -> dict:
+    def extract_ledger_sources(self, draft_markdown: str) -> list[str]:
+        """
+        Extracts all listed reference entries under the '# Verified Source Ledger' section.
+        """
+        ledger_match = re.search(
+            r"#+\s*Verified Source Ledger\b(.*?)(?=\n#+\s|\Z)",
+            draft_markdown,
+            re.DOTALL | re.IGNORECASE
+        )
+        if not ledger_match:
+            return []
+
+        ledger_body = ledger_match.group(1)
+        items = re.findall(
+            r"^\s*(?:[-*•]|\d+[\.\)])\s+(.+)$",
+            ledger_body,
+            re.MULTILINE
+        )
+        return [item.strip() for item in items if item.strip()]
+
+    def extract_research_sources(self, research_notes: str) -> list[str]:
+        """
+        Extracts explicit verified sources/references from the Researcher's raw notes.
+        """
+        if not research_notes or not research_notes.strip():
+            return []
+
+        # 1. Check if research_notes has a dedicated Sources / References / Ledger section
+        section_match = re.search(
+            r"#+\s*(?:Verified\s+)?(?:Primary\s+)?(?:Source|Reference|Citation)[^\n]*\n(.*?)(?=\n#+\s|\Z)",
+            research_notes,
+            re.DOTALL | re.IGNORECASE
+        )
+        section_items = []
+        if section_match:
+            section_items = re.findall(
+                r"^\s*(?:[-*•]|\d+[\.\)])\s+(.+)$",
+                section_match.group(1),
+                re.MULTILINE
+            )
+
+        # 2. Check explicit source/reference bullet lines or URLs across the notes
+        explicit_source_lines = re.findall(
+            r"^\s*(?:[-*•]|\d+[\.\)])\s*(?:\*\*\[?(?:Source|Ref|Primary Source|Citation)[^\n]*|\[(?:Source|Ref)\s*\d*[^\n]*|(?:Source|Ref|Citation)\s*\d*\s*[:\-][^\n]*|.*https?://[^\s\)\]]+[^\n]*)",
+            research_notes,
+            re.MULTILINE | re.IGNORECASE
+        )
+        urls = list(set(re.findall(r"https?://[^\s\)\]]+", research_notes)))
+
+        best_count = max(len(section_items), len(explicit_source_lines), len(urls))
+        if best_count > 0:
+            if len(section_items) == best_count:
+                return [s.strip() for s in section_items if s.strip()]
+            if len(explicit_source_lines) == best_count:
+                return [s.strip() for s in explicit_source_lines if s.strip()]
+            return urls
+
+        return []
+
+    def extract_inline_citations(self, draft_markdown: str) -> int:
+        """
+        Determines the number of unique inline source references (e.g. [Ref 1], [Source 2])
+        cited in the body of the draft prior to the Verified Source Ledger.
+        """
+        ledger_split = re.split(r"#+\s*Verified Source Ledger\b", draft_markdown, flags=re.IGNORECASE)
+        body_text = ledger_split[0] if ledger_split else draft_markdown
+
+        ref_nums = [
+            int(n) for n in re.findall(r"\[(?:Ref|Source|Citation)\s*(\d+)[^\]]*\]", body_text, re.IGNORECASE)
+        ]
+        unique_tags = set(
+             tag.lower() for tag in re.findall(r"\[(?:Ref|Source|Citation)\s*[^\]]+\]", body_text, re.IGNORECASE)
+        )
+        max_num = max(ref_nums) if ref_nums else 0
+        return max(max_num, len(unique_tags))
+
+    def audit_draft(
+        self,
+        draft_markdown: str,
+        research_notes: str,
+        iteration: int,
+        expected_sources_count: int = None
+    ) -> dict:
         """
         Audits draft markdown against raw research notes.
         Returns:
@@ -68,7 +152,38 @@ class ReviewerAuditEngine:
                     self._log_rejection_artifact(draft_markdown, critique, iteration)
                     return critique
 
-        # Check 3: Metric Attribution (Simulate detection on Iteration 1 if uncited metrics exist)
+        # Check 3: Verified Source Ledger Completeness
+        # Ensure all verified sources (from research notes, inline citations, or telemetry count)
+        # are listed in the document's '# Verified Source Ledger' section for reference.
+        ledger_sources = self.extract_ledger_sources(draft_markdown)
+        research_sources = self.extract_research_sources(research_notes)
+        inline_citation_count = self.extract_inline_citations(draft_markdown)
+
+        required_sources_count = max(
+            1,
+            len(research_sources),
+            inline_citation_count,
+            expected_sources_count or 0
+        )
+
+        if len(ledger_sources) < required_sources_count:
+            critique = {
+                "passed": False,
+                "audit_dimension": "Verified Source Ledger",
+                "failed_line": (
+                    f"Verified Source Ledger lists {len(ledger_sources)} source(s), "
+                    f"but {required_sources_count} verified source(s) are required for reference."
+                ),
+                "remediation_note": (
+                    f"Ensure all {required_sources_count} verified sources are explicitly listed in the "
+                    f"'# Verified Source Ledger' section of the document for reference so that the ledger "
+                    f"matches the total number of verified sources."
+                )
+            }
+            self._log_rejection_artifact(draft_markdown, critique, iteration)
+            return critique
+
+        # Check 4: Metric Attribution (Simulate detection on Iteration 1 if uncited metrics exist)
         # On Iteration 1, if draft contains uncited percentage or currency without source attribution, trigger audit failure to demonstrate "The Teeth" feedback loop
         if iteration == 1:
             # Look for percentages or figures in the text

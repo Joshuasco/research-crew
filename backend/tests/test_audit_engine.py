@@ -84,3 +84,38 @@ def test_rejection_artifact_logging():
     assert os.path.exists(rejection_dir)
     files = os.listdir(rejection_dir)
     assert len(files) > 0
+
+def test_verified_source_ledger_completeness_failure():
+    """Test that Reviewer rejects drafts where Verified Source Ledger does not list all verified sources."""
+    research_notes = """# Research Notes
+- Source: IEEE Report 2026 (https://ieee.org/report)
+- Source: ACM Benchmark 2026 (https://acm.org/bench)
+- Source: NIST Standard 2026 (https://nist.gov/std)
+"""
+    draft_missing_sources = """# Executive Summary
+Summary citing [Ref 1], [Ref 2], and [Ref 3].
+
+# Market Context
+Market dynamics.
+
+# Key Competitors & Metrics
+Competitors data.
+
+# Risks & Regulations
+Risks details.
+
+# Strategic Recommendations
+Recommendations.
+
+# Verified Source Ledger
+1. **[Ref 1]** IEEE Report 2026.
+"""
+    result = audit_engine.audit_draft(draft_missing_sources, research_notes, iteration=2, expected_sources_count=3)
+    assert result["passed"] is False
+    assert result["audit_dimension"] == "Verified Source Ledger"
+    assert "3 verified source(s) are required" in result["failed_line"]
+
+    draft_complete_sources = draft_missing_sources + "2. **[Ref 2]** ACM Benchmark 2026.\n3. **[Ref 3]** NIST Standard 2026.\n"
+    result_pass = audit_engine.audit_draft(draft_complete_sources, research_notes, iteration=2, expected_sources_count=3)
+    assert result_pass["passed"] is True
+

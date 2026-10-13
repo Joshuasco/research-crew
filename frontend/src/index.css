@@ -18,7 +18,61 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
+}
+
+/* Light Mode Palette Overrides (triggered by html.light from Header toggle) */
+html.light {
+  color-scheme: light;
+  --color-white: #0f172a;
+  --color-black: #ffffff;
+  --color-neutral-950: #ffffff;
+  --color-neutral-900: #f1f5f9;
+  --color-neutral-800: #e2e8f0;
+  --color-neutral-700: #cbd5e1;
+  --color-neutral-600: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-400: #475569;
+  --color-neutral-300: #334155;
+  --color-neutral-200: #1e293b;
+  --color-neutral-100: #0f172a;
+
+  --color-emerald-950: #ecfdf5;
+  --color-emerald-900: #d1fae5;
+  --color-emerald-800: #a7f3d0;
+  --color-emerald-400: #059669;
+  --color-emerald-300: #047857;
+  --color-emerald-200: #065f46;
+
+  --color-teal-950: #f0fdfa;
+  --color-teal-400: #0d9488;
+  --color-teal-300: #0f766e;
+
+  --color-sky-950: #f0f9ff;
+  --color-sky-400: #0284c7;
+  --color-sky-300: #0369a1;
+
+  --color-indigo-950: #eef2ff;
+  --color-indigo-400: #4f46e5;
+  --color-indigo-300: #4338ca;
+
+  --color-red-950: #fef2f2;
+  --color-red-900: #fecaca;
+  --color-red-800: #fca5a5;
+  --color-red-400: #dc2626;
+  --color-red-300: #b91c1c;
+  --color-red-200: #991b1b;
+
+  --color-amber-950: #fffbeb;
+  --color-amber-400: #d97706;
+  --color-amber-300: #b45309;
+}
+
+html.light body,
+html.light .bg-\[\#070709\] {
+  background-color: #f8fafc;
+  color: #0f172a;
 }
 
 /* Custom Editorial / Terminal Scrollbar */
@@ -28,30 +82,18 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: var(--color-neutral-950, #09090b);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--color-neutral-800, #27272a);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--color-neutral-700, #3f3f46);
 }
 
-/* Subtle Terminal Grid & Dot Textures */
-.bg-grid-dots {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-.bg-grid-lines {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
 
 /* Luminous Glow Effects */
 .glow-emerald-sm {
