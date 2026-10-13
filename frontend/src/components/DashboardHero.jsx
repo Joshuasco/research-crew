@@ -108,9 +108,9 @@ export function DashboardHero({ topic, telemetry, markdownContent }) {
       </div>
 
       {/* LAYER 2: Key Metrics Row (Visual feel of reference cards with top highlight & existing palette) */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-3.5 md:gap-4">
         {/* Research Confidence */}
-        <div className="col-span-2 sm:col-span-2 md:col-span-1 bg-gradient-to-b from-neutral-900/90 to-neutral-950 border border-neutral-800/90 rounded-2xl p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+        <div className="col-span-2 lg:col-span-1 bg-gradient-to-b from-neutral-900/90 to-neutral-950 border border-neutral-800/90 rounded-2xl p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400/80 to-transparent" />
           <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-medium">
             RESEARCH CONFIDENCE
@@ -166,7 +166,7 @@ export function DashboardHero({ topic, telemetry, markdownContent }) {
         </div>
 
         {/* Execution Latency */}
-        <div className="col-span-2 sm:col-span-2 md:col-span-1 bg-gradient-to-b from-neutral-900/90 to-neutral-950 border border-neutral-800/90 rounded-2xl p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+        <div className="bg-gradient-to-b from-neutral-900/90 to-neutral-950 border border-neutral-800/90 rounded-2xl p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-400/70 to-transparent" />
           <div className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 font-medium">
             EXECUTION
