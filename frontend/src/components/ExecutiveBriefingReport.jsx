@@ -6,12 +6,20 @@ import {
   AlertTriangle,
   Sparkles,
   Eye,
-  Code
+  Code,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 import { ExportActions } from './ExportActions';
 import { parseMarkdownBlocks, stripMarkdown } from '../utils/markdownParser';
 
-export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus }) {
+export function ExecutiveBriefingReport({
+  markdownContent,
+  topic,
+  agentStatus,
+  isTelemetryOpen = false,
+  onToggleTelemetry
+}) {
   const [viewMode, setViewMode] = useState('executive'); // 'executive' | 'raw'
 
   if (!markdownContent) return null;
@@ -112,26 +120,47 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
   return (
     <div className="bg-neutral-950 border border-neutral-800 rounded-lg flex flex-col overflow-hidden shadow-2xl">
       {/* Top Document Header Bar with View Toggle and Export Toolbar */}
-      <div className="bg-neutral-900/90 px-5 py-3.5 border-b border-neutral-800 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <img
-            src="/neo-rc-logo.png"
-            alt="The Research Crew Logo"
-            className="w-4 h-4 object-contain"
-          />
-          <h2 className="text-xs font-sans font-semibold uppercase tracking-wider text-white">
-            Verified Executive Briefing Document
-          </h2>
+      <div className="bg-neutral-900/90 px-3.5 sm:px-5 py-3 sm:py-3.5 border-b border-neutral-800 flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-3 w-full">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            {onToggleTelemetry && (
+              <button
+                type="button"
+                onClick={onToggleTelemetry}
+                className={`p-1.5 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 text-[11px] font-mono shrink-0 ${
+                  isTelemetryOpen
+                    ? 'bg-emerald-950/60 border-emerald-700/70 text-emerald-300 hover:bg-emerald-950'
+                    : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-700'
+                }`}
+                title={isTelemetryOpen ? 'Hide Telemetry & Audit Sidebar' : 'Show Telemetry & Audit Sidebar'}
+              >
+                {isTelemetryOpen ? (
+                  <PanelLeftClose className="w-3.5 h-3.5 text-emerald-400" />
+                ) : (
+                  <PanelLeftOpen className="w-3.5 h-3.5" />
+                )}
+              </button>
+            )}
+            <img
+              src="/neo-rc-logo.png"
+              alt="The Research Crew Logo"
+              className="w-4 h-4 object-contain shrink-0"
+            />
+            <h2 className="text-[10px] sm:text-xs font-sans font-semibold uppercase tracking-wider text-white truncate">
+              Verified Executive Briefing Document
+            </h2>
+          </div>
+
           {agentStatus === 'passed' && (
-            <span className="px-2 py-0.5 text-[10px] font-mono font-semibold rounded bg-emerald-950 text-emerald-300 border border-emerald-700/80 flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-emerald-400" />
-              Audited & Approved
+            <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold rounded bg-emerald-950 text-emerald-300 border border-emerald-700/80 flex items-center gap-1 shrink-0">
+              <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
+              <span>Audited & Approved</span>
             </span>
           )}
         </div>
 
         {/* View Toggle & Export Actions Toolbar */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
           {/* Toggle between Executive Presentation and Raw Markdown */}
           <div className="flex items-center bg-neutral-950 rounded border border-neutral-800 p-0.5 font-sans text-xs font-medium">
             <button
@@ -169,7 +198,7 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
       </div>
 
       {/* Document Body View */}
-      <div className="p-6 md:p-8 overflow-y-auto max-h-[850px] scrollbar-thin text-neutral-200">
+      <div className="p-4 sm:p-6 md:p-8 overflow-y-auto max-h-[850px] scrollbar-thin text-neutral-200">
         {viewMode === 'raw' ? (
           /* Raw Markdown View */
           <article className="prose prose-invert prose-neutral max-w-none prose-headings:font-mono prose-headings:uppercase prose-h1:text-xl prose-table:border prose-table:border-neutral-800 prose-th:bg-neutral-900 prose-td:border-neutral-800 text-sm leading-relaxed">
@@ -489,7 +518,7 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
                         }
                         if (b.type === 'paragraph') {
                           return (
-                            <p key={bIdx} className="col-span-3 text-xs md:text-sm text-neutral-400 font-sans font-normal leading-relaxed">
+                            <p key={bIdx} className="md:col-span-3 text-xs md:text-sm text-neutral-400 font-sans font-normal leading-relaxed">
                               {renderInlineStyled(b.text)}
                             </p>
                           );
@@ -525,17 +554,17 @@ export function ExecutiveBriefingReport({ markdownContent, topic, agentStatus })
                             return (
                               <div
                                 key={`${bIdx}-${itemIdx}`}
-                                className="p-3 rounded-md bg-neutral-900/60 border border-neutral-800/80 flex items-center justify-between gap-3 text-xs"
+                                className="p-3 rounded-md bg-neutral-900/60 border border-neutral-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 text-xs"
                               >
-                                <div className="flex items-center gap-2.5">
-                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-neutral-800 text-teal-300 border border-neutral-700">
+                                <div className="flex flex-wrap sm:flex-nowrap items-start sm:items-center gap-2 sm:gap-2.5 min-w-0">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase bg-neutral-800 text-teal-300 border border-neutral-700 shrink-0">
                                     {badge}
                                   </span>
-                                  <span className="text-neutral-300 font-sans font-normal text-xs leading-relaxed">
+                                  <span className="text-neutral-300 font-sans font-normal text-xs leading-relaxed break-words">
                                     {renderInlineStyled(citation)}
                                   </span>
                                 </div>
-                                <span className="text-[10px] font-mono font-medium text-neutral-500 uppercase shrink-0">
+                                <span className="text-[10px] font-mono font-medium text-neutral-500 uppercase shrink-0 self-end sm:self-auto">
                                   Verified
                                 </span>
                               </div>

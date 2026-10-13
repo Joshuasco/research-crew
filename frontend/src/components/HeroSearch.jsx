@@ -3,9 +3,7 @@ import { Search, ArrowRight, Zap, Sparkles, Shield, BookOpen } from 'lucide-reac
 
 const SAMPLE_TOPICS = [
   "Commercial Fusion Energy Reactor Benchmarks & Timeline",
-  "Autonomous AI Agent Enterprise Workflows 2026",
-  "Solid-State Battery Commercialization & EV Supply Chains",
-  "Post-Quantum Cryptography & NIST Standard Enforcement"
+  "Autonomous AI Agent Enterprise Workflows 2026"
 ];
 
 export function HeroSearch({ onStartResearch, onRunDemo, isStreaming, error }) {
@@ -23,50 +21,42 @@ export function HeroSearch({ onStartResearch, onRunDemo, isStreaming, error }) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto my-auto py-10 md:py-16 flex flex-col items-center text-center">
+    <div className="max-w-4xl w-full mx-auto my-auto py-6 sm:py-10 md:py-16 flex flex-col items-center text-center">
       {/* Brand Logo */}
       <img
         src="/neo-rc-logo.png"
         alt="The Research Crew Logo"
-        className="w-20 h-20 md:w-24 md:h-24 object-contain mb-5 drop-shadow-[0_0_35px_rgba(16,185,129,0.25)] select-none"
+        className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain mb-4 sm:mb-5 drop-shadow-[0_0_35px_rgba(16,185,129,0.25)] select-none"
       />
 
-      {/* Top Overline Badge */}
-      <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-neutral-900/90 border border-neutral-800 text-neutral-300 text-xs font-mono mb-5 shadow-sm">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-        <span className="font-semibold text-emerald-400">Autonomous Multi-Agent Intelligence</span>
-        <span className="text-neutral-600">•</span>
-        <span className="text-neutral-400">Zero Phantom Claims</span>
-      </div>
-
       {/* Main Title & Editorial Subtitle */}
-      <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white font-sans uppercase mb-3 leading-none">
+      <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white font-sans uppercase mb-2.5 sm:mb-3 leading-none">
         The Research Crew
       </h1>
-      <p className="text-lg md:text-2xl text-neutral-400 font-sans tracking-wide max-w-2xl mb-10 leading-relaxed font-light">
+      <p className="text-base sm:text-lg md:text-2xl text-neutral-400 font-sans tracking-wide max-w-2xl mb-6 sm:mb-10 leading-relaxed font-light px-2">
         &ldquo;Autonomous research. Verified intelligence.&rdquo;
       </p>
 
       {/* Prominent Research Input Box */}
       <div className="w-full max-w-3xl bg-neutral-900/90 border border-neutral-700/80 rounded-xl p-3 md:p-4 shadow-2xl backdrop-blur-sm glow-subtle mb-6">
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-stretch gap-3">
+        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-stretch gap-2.5 sm:gap-3">
           <div className="relative flex-1 flex items-center">
-            <Search className="w-5 h-5 absolute left-4 text-neutral-500 shrink-0 pointer-events-none" />
+            <Search className="w-5 h-5 absolute left-3.5 sm:left-4 text-neutral-500 shrink-0 pointer-events-none" />
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="What would you like to investigate?"
               disabled={isStreaming}
-              className="w-full bg-neutral-950 border border-neutral-800 rounded-lg py-3.5 pl-12 pr-4 text-sm md:text-base text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500 transition-all font-sans"
+              className="w-full bg-neutral-950 border border-neutral-800 rounded-lg py-3 sm:py-3.5 pl-11 sm:pl-12 pr-3 sm:pr-4 text-sm md:text-base text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-emerald-500/80 focus:ring-1 focus:ring-emerald-500 transition-all font-sans"
             />
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
-              className="flex-1 md:flex-initial px-6 py-3.5 rounded-lg bg-white text-black hover:bg-neutral-200 font-sans text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-40"
+              className="flex-1 md:flex-initial px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-white text-black hover:bg-neutral-200 font-sans text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg disabled:opacity-40"
               title="Execute live research pipeline"
             >
               Start Research
@@ -77,7 +67,7 @@ export function HeroSearch({ onStartResearch, onRunDemo, isStreaming, error }) {
               type="button"
               onClick={() => onRunDemo(input.trim())}
               disabled={isStreaming}
-              className="px-4 py-3.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 font-sans text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap glow-emerald-sm"
+              className="px-4 py-3 sm:py-3.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 font-sans text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap glow-emerald-sm"
               title="Run fast presentation walkthrough simulating all 3 agents"
             >
               <Zap className="w-4 h-4 text-emerald-400" />

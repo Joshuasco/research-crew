@@ -53,9 +53,9 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
         raise HTTPException(status_code=400, detail="Topic prompt cannot be empty.")
 
     async def event_generator() -> AsyncGenerator[dict, None]:
-        telemetry = TelemetryTracker()
         iteration = 1
         max_iterations = settings.MAX_REVISION_ITERATIONS
+        telemetry = TelemetryTracker(max_iterations=max_iterations)
         last_critique = None
         draft_markdown = ""
 
@@ -156,9 +156,10 @@ async def stream_briefing(topic: str = Query(..., description="Briefing topic pr
                 audit_result = await reviewer_agent.run(
                     draft_markdown=draft_markdown,
                     research_notes=research_notes,
-                    iteration=iteration
+                    iteration=iteration,
+                    expected_sources_count=telemetry.research_sources_count
                 )
-                telemetry.update_from_audit(audit_result, iteration)
+                telemetry.update_from_audit(audit_result, iteration, max_iterations=max_iterations)
 
                 if not audit_result["passed"]:
                     last_critique = audit_result

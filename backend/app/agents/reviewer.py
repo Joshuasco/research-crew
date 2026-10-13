@@ -9,11 +9,22 @@ class ReviewerAgent:
         from app.agents.crew import create_reviewer_agent
         return create_reviewer_agent()
 
-    async def run(self, draft_markdown: str, research_notes: str, iteration: int) -> dict:
+    async def run(
+        self,
+        draft_markdown: str,
+        research_notes: str,
+        iteration: int,
+        expected_sources_count: int = None
+    ) -> dict:
         logger.info(f"Reviewer Agent auditing draft (Iteration {iteration})")
         
-        # Apply deterministic audit rules ("The Teeth")
-        audit_result = audit_engine.audit_draft(draft_markdown, research_notes, iteration)
+        # Apply deterministic audit rules ("The Teeth"), including verifying all verified sources are listed in the ledger
+        audit_result = audit_engine.audit_draft(
+            draft_markdown,
+            research_notes,
+            iteration,
+            expected_sources_count=expected_sources_count
+        )
         return audit_result
 
 reviewer_agent = ReviewerAgent()

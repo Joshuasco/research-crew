@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useBriefingStream } from './hooks/useBriefingStream';
 import { Header } from './components/Header';
 import { HeroSearch } from './components/HeroSearch';
@@ -11,6 +11,8 @@ import { ReviewerDiffViewer } from './components/ReviewerDiffViewer';
 import { BriefingForm } from './components/BriefingForm';
 
 export function App() {
+  const [isTelemetryOpen, setIsTelemetryOpen] = useState(false);
+
   const {
     topic,
     isStreaming,
@@ -27,7 +29,6 @@ export function App() {
     isDemoMode,
     startStream,
     resetState,
-    loadDemoBriefing,
     runInteractiveDemo
   } = useBriefingStream();
 
@@ -35,12 +36,8 @@ export function App() {
     <div className="min-h-screen bg-[#070709] text-neutral-100 flex flex-col font-sans selection:bg-emerald-400 selection:text-black">
       {/* Top Presentation Header Bar */}
       <Header
-        isStreaming={isStreaming}
         isDemoMode={isDemoMode}
-        onRunDemo={() => runInteractiveDemo(topic || 'Commercial Fusion Energy Reactor Benchmarks & Timeline')}
-        onLoadDemo={() => loadDemoBriefing(topic || 'Commercial Fusion Energy Reactor Benchmarks & Timeline')}
         onReset={resetState}
-        hasBriefing={!!markdownContent}
       />
 
       {/* Main Content Area */}
@@ -76,7 +73,6 @@ export function App() {
             <DashboardHero
               topic={topic}
               telemetry={telemetry}
-              agentStatus={agentStatus}
               markdownContent={markdownContent}
             />
 
@@ -84,44 +80,54 @@ export function App() {
             <EvidenceConfidenceGraph telemetry={telemetry} />
 
             {/* Split-Pane Core Presentation Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Pane (4 Cols): Live Telemetry Stream & Reviewer Diff */}
-              <div className="lg:col-span-4 space-y-4">
-                <TelemetrySidebar
-                  currentAgent={currentAgent}
-                  agentStatus={agentStatus}
-                  statusMessage={statusMessage}
-                  iteration={iteration}
-                  maxIterations={maxIterations}
-                  telemetry={telemetry}
-                  logs={logs}
-                  rejections={rejections}
-                />
+            <div className="flex flex-col lg:flex-row items-start w-full overflow-hidden">
+              {/* Left Pane (4 Cols when open): Live Telemetry Stream & Reviewer Diff */}
+              <div
+                className={`transition-all duration-300 ease-in-out shrink-0 ${
+                  isTelemetryOpen
+                    ? 'w-full lg:w-4/12 opacity-100 translate-x-0 lg:pr-6 mb-6 lg:mb-0'
+                    : 'w-0 max-h-0 lg:max-h-none opacity-0 -translate-x-6 overflow-hidden pointer-events-none'
+                }`}
+              >
+                <div className="space-y-4">
+                  <TelemetrySidebar
+                    currentAgent={currentAgent}
+                    agentStatus={agentStatus}
+                    statusMessage={statusMessage}
+                    iteration={iteration}
+                    maxIterations={maxIterations}
+                    telemetry={telemetry}
+                    logs={logs}
+                    rejections={rejections}
+                  />
 
-                {/* Audit Diff Display if rejections occurred */}
-                {rejections && rejections.length > 0 && (
-                  <div className="bg-neutral-950 border border-neutral-800 rounded-lg p-4">
-                    <div className="text-xs font-mono font-bold text-red-400 uppercase tracking-wider mb-2">
-                      Reviewer Rejection Audit Log
+                  {/* Audit Diff Display if rejections occurred */}
+                  {rejections && rejections.length > 0 && (
+                    <div className="bg-neutral-950 border border-neutral-800 rounded-lg p-4">
+                      <div className="text-xs font-mono font-bold text-red-400 uppercase tracking-wider mb-2">
+                        Reviewer Rejection Audit Log
+                      </div>
+                      <ReviewerDiffViewer rejections={rejections} />
                     </div>
-                    <ReviewerDiffViewer rejections={rejections} />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
-              {/* Right Pane (8 Cols): Editorial Executive Briefing Report */}
-              <div className="lg:col-span-8 flex flex-col">
+              {/* Right Pane (Full width when closed, 8 Cols when open): Editorial Executive Briefing Report & Form */}
+              <div
+                className={`transition-all duration-300 ease-in-out flex flex-col gap-6 ${
+                  isTelemetryOpen ? 'w-full lg:w-8/12' : 'w-full'
+                }`}
+              >
                 <ExecutiveBriefingReport
                   markdownContent={markdownContent}
                   topic={topic}
                   agentStatus={agentStatus}
+                  isTelemetryOpen={isTelemetryOpen}
+                  onToggleTelemetry={() => setIsTelemetryOpen((prev) => !prev)}
                 />
-              </div>
-            </div>
 
-            {/* Secondary Query Bar for New Investigations */}
-            <div className="mt-8 pt-6 border-t border-neutral-900">
-              <div className="max-w-4xl mx-auto">
+                {/* Secondary Query Bar for New Investigations */}
                 <BriefingForm
                   onSubmit={startStream}
                   isStreaming={isStreaming}
@@ -134,22 +140,22 @@ export function App() {
       </main>
 
       {/* Presentation Terminal Footer */}
-      <footer className="border-t border-neutral-900 bg-neutral-950 py-3.5 px-6 text-xs text-neutral-500 flex flex-col md:flex-row items-center justify-between gap-2 mt-auto">
-        <div className="flex items-center gap-2.5">
+      <footer className="border-t border-neutral-900 bg-neutral-950 py-3.5 px-4 sm:px-6 text-xs text-neutral-500 flex flex-col md:flex-row items-center justify-between gap-2.5 mt-auto text-center md:text-left">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
           <img
             src="/neo-rc-logo.png"
             alt="The Research Crew"
-            className="w-4 h-4 object-contain"
+            className="w-4 h-4 object-contain shrink-0"
           />
           <span className="font-sans text-neutral-200 font-semibold">The Research Crew</span>
-          <span>&bull;</span>
+          <span className="hidden sm:inline">&bull;</span>
           <span className="font-sans text-emerald-400 font-normal">Deterministic Multi-Agent Research Platform</span>
         </div>
-        <div className="flex items-center gap-4 text-xs text-neutral-400">
+        <div className="flex flex-wrap items-center justify-center md:justify-end gap-2.5 sm:gap-4 text-xs text-neutral-400">
           <span><strong className="font-mono text-neutral-300 font-medium">Researcher:</strong> <span className="font-sans">Live Retrieval</span></span>
-          <span>&bull;</span>
+          <span className="hidden sm:inline">&bull;</span>
           <span><strong className="font-mono text-neutral-300 font-medium">Writer:</strong> <span className="font-sans">Structured Synthesis</span></span>
-          <span>&bull;</span>
+          <span className="hidden sm:inline">&bull;</span>
           <span><strong className="font-mono text-emerald-400 font-semibold">Reviewer:</strong> <span className="font-sans text-emerald-400 font-medium">&ldquo;The Teeth&rdquo; Audit</span></span>
         </div>
       </footer>

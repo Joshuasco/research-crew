@@ -28,7 +28,7 @@ MANDATORY STRUCTURAL & FORMATTING CONSTRAINTS:
    - # Risks & Regulations: Detail major risk vectors, compliance requirements, and regulatory hurdles. Format EVERY risk bullet item strictly as:
      - **[Risk Title]**: [Detailed risk vector description and operational impact]. *Mitigation: [Actionable mitigation strategy].*
    - # Strategic Recommendations: Provide 3+ prioritized, tactical recommendations with bold titles and concrete execution steps.
-   - # Verified Source Ledger: List EVERY source reference cited in the briefing with bracketed tags and complete citation metadata (e.g., '1. **[Primary Source]** *Report/Document Title*, Publisher/Author (Date).'). Every reference listed MUST be cited in the text, and every claim MUST map to a ledger entry.
+    - # Verified Source Ledger: List EVERY verified source from the research notes and every reference cited in the briefing with bracketed tags and complete citation metadata (e.g., '1. **[Ref 1: Primary Source]** *Report/Document Title*, Publisher/Author (Date).'). Every verified source counted in the research notes and every inline [Ref X] citation MUST be explicitly listed here for reference so the total number of verified sources matches the Verified Source Ledger.
 
 3. Topic Relevance & Factual Precision Constraint:
    - All content MUST focus exclusively on the specified research topic itself.
@@ -61,7 +61,7 @@ REVIEWER AUDIT REJECTION CRITIQUE (Iteration {iteration - 1}):
 - Rejected Line: {critique.get('failed_line')}
 - Remediation Note: {critique.get('remediation_note')}
 
-Please revise the executive draft to strictly fix the above audit critique while preserving all 6 mandatory section headings.
+Please revise the executive draft to strictly fix the above audit critique while preserving all 6 mandatory section headings and ensuring all verified sources are listed in '# Verified Source Ledger' for reference.
 """
         else:
             user_prompt = f"""INITIAL DRAFT CREATION (Iteration 1)
@@ -77,7 +77,7 @@ Draft an executive briefing populating all 6 mandatory section headings:
 3. # Key Competitors & Metrics
 4. # Risks & Regulations
 5. # Strategic Recommendations
-6. # Verified Source Ledger
+6. # Verified Source Ledger (Must list ALL verified sources from the research notes and inline citations for reference)
 """
 
         draft = await llm_client.generate_completion(SYSTEM_PROMPT, user_prompt, temperature=0.3)

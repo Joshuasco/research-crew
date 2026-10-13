@@ -3,9 +3,7 @@ import { Search, Sparkles, ArrowRight, AlertCircle } from 'lucide-react';
 
 const SAMPLE_TOPICS = [
   "Autonomous AI Agent Enterprise Workflows 2026",
-  "Solid-State Battery Commercialization & EV Supply Chains",
-  "Post-Quantum Cryptography & NIST Standard Enforcement",
-  "Commercial Fusion Energy Reactor Benchmarks & Timeline"
+  "Solid-State Battery Commercialization & EV Supply Chains"
 ];
 
 export function BriefingForm({ onSubmit, isStreaming, error }) {
@@ -31,20 +29,22 @@ export function BriefingForm({ onSubmit, isStreaming, error }) {
           <label className="block text-xs font-sans font-medium text-neutral-400 uppercase tracking-wider mb-2">
             Research Crew Briefing Prompt
           </label>
-          <div className="relative flex items-center">
-            <Search className="w-4 h-4 absolute left-3.5 text-neutral-500" />
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="e.g. Autonomous AI Agent Enterprise Adoption in 2026..."
-              disabled={isStreaming}
-              className="w-full bg-neutral-950 border border-neutral-700 rounded-md py-2.5 pl-10 pr-32 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-sans font-normal"
-            />
+          <div className="flex flex-col sm:relative sm:flex-row sm:items-center gap-2 sm:gap-0">
+            <div className="relative flex-1 flex items-center">
+              <Search className="w-4 h-4 absolute left-3.5 text-neutral-500 pointer-events-none" />
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="e.g. Autonomous AI Agent Enterprise Adoption in 2026..."
+                disabled={isStreaming}
+                className="w-full bg-neutral-950 border border-neutral-700 rounded-md py-2.5 pl-10 pr-4 sm:pr-32 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all font-sans font-normal"
+              />
+            </div>
             <button
               type="submit"
               disabled={!input.trim() || isStreaming}
-              className="absolute right-1.5 px-4 py-1.5 bg-white text-black hover:bg-neutral-200 disabled:opacity-40 font-sans text-xs font-semibold rounded flex items-center gap-1.5 transition-all cursor-pointer"
+              className="w-full sm:w-auto sm:absolute sm:right-1.5 px-4 py-2 sm:py-1.5 bg-white text-black hover:bg-neutral-200 disabled:opacity-40 font-sans text-xs font-semibold rounded flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               {isStreaming ? (
                 <>

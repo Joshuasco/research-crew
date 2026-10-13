@@ -42,7 +42,7 @@ export function ResearchProgression({
   return (
     <div className="max-w-4xl w-full mx-auto my-auto py-8 flex flex-col items-center">
       {/* Active Investigation Topic Banner */}
-      <div className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-5 mb-6 text-center bg-grid-lines relative overflow-hidden">
+      <div className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-5 mb-6 text-center relative overflow-hidden">
         <div className="flex items-center justify-center gap-2 mb-2.5">
           <img
             src="/neo-rc-logo.png"
@@ -100,7 +100,7 @@ export function ResearchProgression({
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 font-sans text-xs text-neutral-400 pl-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2 font-sans text-xs text-neutral-400 pl-2 sm:pl-8">
             <span className={researcherState === 'active' ? 'text-teal-300 font-medium' : ''}>
               ● Searching sources
             </span>
@@ -130,7 +130,7 @@ export function ResearchProgression({
               : 'bg-neutral-950/60 border-neutral-900 opacity-50'
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2.5">
               <span className={`w-6 h-6 rounded flex items-center justify-center font-mono font-bold text-xs ${
                 writerState === 'completed' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
@@ -154,7 +154,7 @@ export function ResearchProgression({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 font-sans text-xs text-neutral-400 pl-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 font-sans text-xs text-neutral-400 pl-2 sm:pl-8">
             <span className={writerState === 'active' ? 'text-indigo-300 font-medium' : ''}>
               ● Synthesizing findings
             </span>
@@ -183,7 +183,7 @@ export function ResearchProgression({
               : 'bg-neutral-950/60 border-neutral-900 opacity-50'
           }`}
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2.5">
               <span className={`w-6 h-6 rounded flex items-center justify-center font-mono font-bold text-xs ${
                 reviewerState === 'verified' ? 'bg-emerald-900 text-emerald-300 border border-emerald-500' :
@@ -210,7 +210,7 @@ export function ResearchProgression({
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 font-sans text-xs text-neutral-400 pl-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2 font-sans text-xs text-neutral-400 pl-2 sm:pl-8">
             <span className={reviewerState === 'auditing' ? 'text-emerald-300 font-medium' : ''}>
               ● Cross-checking claims
             </span>
@@ -225,7 +225,7 @@ export function ResearchProgression({
       </div>
 
       {/* Real-Time Live Telemetry Bar */}
-      <div className="w-full max-w-2xl bg-neutral-900/90 border border-neutral-800 rounded-lg p-3.5 mb-6 font-mono text-xs flex items-center justify-between">
+      <div className="w-full max-w-2xl bg-neutral-900/90 border border-neutral-800 rounded-lg p-3.5 mb-6 font-mono text-xs flex flex-wrap items-center justify-between gap-2.5">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-neutral-400" />
           <span className="text-neutral-400 font-medium">Elapsed:</span>
