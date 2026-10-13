@@ -10,8 +10,6 @@ __pycache__/
 *$py.class
 
 # Environment variables
-.env
-.env.local
 
 # Node / Frontend
 node_modules/
@@ -19,5 +17,5 @@ dist/
 
 # OS / Editor metadata
 .DS_Store
-.vscode/
 .idea/
+config.bat
